@@ -1,0 +1,53 @@
+i{
+  margin-right: 5px;
+}
+input{
+  border-radius:2px!important;
+}
+.el-table{
+  border-left:1px solid #ebeef5;
+  border-right:1px solid #ebeef5;
+}
+thead th{
+  background: #F0F2F4!important;
+  color: #33363A;
+}
+.el-table--striped .el-table__body tr.el-table__row--striped td{
+  background: #F3F4F4;
+}
+.el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+  background-color: #FEEDEF;
+}
+.el-select-dropdown__item.selected{
+  color: #BF0505;
+}
+/*添加按钮*/
+.add-btn {
+  background-color: #fff;
+  border: 1px solid #F43142;
+  color: #F43142;
+  font-weight: bolder;
+  height: 40px;
+  padding: 11px 15px;
+  border-radius:2px;
+}
+.add-btn:hover, .add-btn:active, .add-btn:focus {
+  opacity:0.8;
+  background-color: #cd1423;
+  color: #fff;
+}
+/*返回按钮*/
+.back-btn {
+  background: #333a44;
+  border: 0 none;
+  color: #fff;
+  font-weight: bolder;
+  padding: 11px 20px;
+  height: 40px;
+}
+.back-btn:hover, .back-btn:active, .back-btn:focus {
+  background: #333a44;
+  border: 0 none;
+  color: #fff;
+  opacity: 0.8;
+}
