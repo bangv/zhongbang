@@ -129,15 +129,19 @@ export default {
     margin: 0 auto;
     width: 34px;
     height: 34px;
+    background-size: 100% 100%;
   }
   .side-ioc-bg-1 {
     background: url("../assets/task_normal.png") no-repeat top left;
+    background-size: 100% 100%;
   }
   .side-ioc-bg-2 {
     background: url("../assets/withdraw_normal .png") no-repeat top left;
+    background-size: 100% 100%;
   }
   .side-ioc-bg-3 {
     background: url("../assets/appeal_normal.png") no-repeat top left;
+    background-size: 100% 100%;
   }
 }
 

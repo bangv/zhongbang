@@ -1,6 +1,37 @@
 <template>
   <div class="sale-wrap">
+    <b-row class="tab-total">
+       <b-col cols="12">
+        <ul>
+          <li class="red">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
 
+          <li class="green">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
+
+          <li class="blue">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
+          <li class="red">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
+          <li class="green">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
+          <li class="blue last-mr">
+            <span class="count">2300</span>
+            <span class="total-content">任务币总量</span>
+          </li>
+        </ul>
+      </b-col>
+    </b-row>
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
@@ -15,7 +46,6 @@
           <li>
             <span>驳回</span>
           </li>
-
           <li>
             <span class="last-bd">全部</span>
           </li>
@@ -89,211 +119,262 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        modalShow: false,
-        CodeName: "",
-        pickerOptions: {},
-        name: "",
-        saleList: [],
-        total: 0,
-        perPage: 20,
-        page: 1,
-        tableData2: [],
-        num: 3,
-        falg: true
-      };
-    },
-    methods: {
-      searchCard() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        let searchData = [];
-        if (this.CodeName) {
-          localData.map(item => {
-            if (
-              item.card_no.toString().indexOf(this.CodeName) > -1 ||
-              item.card_name.indexOf(this.CodeName) > -1
-            ) {
-              searchData.push(item);
-            }
-          });
-          if (!searchData.length) {
-            this.modalShow = true;
-            this.saleList = localData;
-          } else {
-            this.saleList = searchData;
-          }
-        } else {
-          this.saleList = localData;
-        }
-      },
-      save() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        this.saleList = localData;
-        if (this.typeTitle === "编辑卡券") {
-          this.saleList[this.editIndex] = this.cardInfo;
-        } else {
-          this.saleList.unshift(this.cardInfo);
-        }
-        sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
-        this.showAdd = true;
-      },
-      back() {
-        this.showAdd = true;
-      },
-      deleteRow(index, row) {
-        console.log(index);
-      },
 
-      editCard(type, index) {
-        if (type === "edit") {
-          this.editIndex = index;
-          this.cardInfo = this.saleList[index];
-          this.typeTitle = "编辑卡券";
+export default {
+  data() {
+    return {
+      modalShow: false,
+      CodeName: "",
+      pickerOptions: {},
+      name: "",
+      saleList: [],
+      total: 0,
+      perPage: 20,
+      page: 1,
+      tableData2: [],
+      num: 3,
+      falg: true
+    };
+  },
+  methods: {
+    searchCard() {
+      let localData = JSON.parse(sessionStorage.getItem("cardLists"));
+      let searchData = [];
+      if (this.CodeName) {
+        localData.map(item => {
+          if (
+            item.card_no.toString().indexOf(this.CodeName) > -1 ||
+            item.card_name.indexOf(this.CodeName) > -1
+          ) {
+            searchData.push(item);
+          }
+        });
+        if (!searchData.length) {
+          this.modalShow = true;
+          this.saleList = localData;
         } else {
-          this.cardInfo = {
-            card_no: parseInt(new Date().getTime() / 1000),
-            card_name: "",
-            card_type: "",
-            start_time: "",
-            end_time: "",
-            status: "已提交"
-          };
-          this.editIndex = 0;
-          this.typeTitle = "新增卡券";
+          this.saleList = searchData;
         }
-        this.showAdd = false;
+      } else {
+        this.saleList = localData;
       }
     },
-    computed: {},
-    mounted() {
-      for (let i = 0; i < 200; i++) {
-        this.tableData2.push({
-          name: '2016-05-02',
-          type: '注册',
-          title: '微信邀请好友',
-          price: '￥2.3',
-          count: 234,
-          endTime: '2018-10-20 12:34',
-          startTime: '2018-09-20 12:34'
-        });
+    save() {
+      let localData = JSON.parse(sessionStorage.getItem("cardLists"));
+      this.saleList = localData;
+      if (this.typeTitle === "编辑卡券") {
+        this.saleList[this.editIndex] = this.cardInfo;
+      } else {
+        this.saleList.unshift(this.cardInfo);
       }
-      this.total = this.tableData2.length;
+      sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
+      this.showAdd = true;
+    },
+    back() {
+      this.showAdd = true;
+    },
+    deleteRow(index, row) {
+      console.log(index);
+    },
+
+    editCard(type, index) {
+      if (type === "edit") {
+        this.editIndex = index;
+        this.cardInfo = this.saleList[index];
+        this.typeTitle = "编辑卡券";
+      } else {
+        this.cardInfo = {
+          card_no: parseInt(new Date().getTime() / 1000),
+          card_name: "",
+          card_type: "",
+          start_time: "",
+          end_time: "",
+          status: "已提交"
+        };
+        this.editIndex = 0;
+        this.typeTitle = "新增卡券";
+      }
+      this.showAdd = false;
     }
-  };
+  },
+  computed: {},
+  mounted() {
+    console.log(router)
+    for (let i = 0; i < 200; i++) {
+      this.tableData2.push({
+        name: "2016-05-02",
+        type: "注册",
+        title: "微信邀请好友",
+        price: "￥2.3",
+        count: 234,
+        endTime: "2018-10-20 12:34",
+        startTime: "2018-09-20 12:34"
+      });
+    }
+    this.total = this.tableData2.length;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-  @media (min-width: 768px) {
-    .sale-table {
-      margin-bottom: 0;
-      .table-box {
-        height: auto;
-        overflow-y: auto;
-      }
+@media (min-width: 768px) {
+  .sale-table {
+    margin-bottom: 0;
+    .table-box {
+      height: auto;
+      overflow-y: auto;
     }
   }
+}
 
-  //列表和头部的公共样式
-  .sale-wrap /deep/ {
-    * {
-      outline: none !important;
-    }
-    width: 100%;
-    .tab-title {
-      ul,
-      li {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        span {
-          display: inline-block;
-          padding-right: 10px;
-          border-right: 2px solid #e9e9e9;
-          color: #000;
-          &.last-bd {
-            border-right: 0;
-          }
-          &.active {
-            color: #ff4343;
-            font-weight: bold;
-          }
-        }
-      }
-      li {
-        display: inline-block;
-        padding-bottom: 15px;
-        margin-right: 15px;
-      }
-    }
-    .el-table th {
-      border-bottom: 1px solid #e9e9e9 !important;
-      background: #ffffff !important;
-      border-top: 0 !important;
-      text-align: center !important;
-    }
-    .el-table td {
-      border-top: 0 !important;
-      border: 0 !important;
-      text-align: center !important;
-    }
-    .card.text-center.sale-table {
-      border: 0 !important;
-      box-shadow: 2px 2px 10px #ccc;
-      border-radius: 0 !important;
-
-      .card-body {
-        padding: 0 !important;
-      }
-    }
-    .el-icon-arrow-left:before {
-      content: '上一页' !important;
-    }
-    .el-icon-arrow-right:before {
-      content: '下一页' !important;
-    }
-    .nav-pagination {
+//列表和头部的公共样式
+.sale-wrap /deep/ {
+  ul,
+  li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  * {
+    outline: none !important;
+  }
+  width: 100%;
+  .tab-total {
+    ul {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      .total-count{
-        padding-left: 20px;
-        .txt-rd{
-          color: #FF4343;
-          display: inline-block;
-          padding: 0 3px;
-          font-size: 12px;
-        }
+    }
+    li {
+      margin-right: 20px;
+      display: inline-block;
+      flex: 1;
+      background: #fff;
+      box-shadow: 2px 2px 10px #ccc;
+      margin-bottom: 15px;
+      &.last-mr{
+        margin-right: 0;
       }
-
-      .el-pagination {
-        padding-right: 20px;
-        margin-top: 15px;
-        text-align: right;
-        margin-bottom: 15px;
-        .btn-next, .btn-prev {
-          background: rgb(232, 235, 237);
-          color: rgb(51, 51, 51);
-          font-size: 14px;
-          margin-left: 6px;
+      &.red {
+        background: url("../assets/red.png") no-repeat top left;
+        background-size: 100% 2px;
+      }
+      &.green {
+        background: url("../assets/green.png") no-repeat top left;
+        background-size: 100% 2px;
+      }
+      &.blue {
+        background: url("../assets/blue.png") no-repeat top left;
+        background-size: 100% 2px;
+      }
+      span {
+        display: block;
+        text-align: center;
+        color: #666;
+        &.total-content {
+          padding-bottom: 30px;
         }
-        .el-pager li {
-          padding: 0;
-          background: rgb(232, 235, 237);
-          font-size: 14px;
-          color: rgb(51, 51, 51);
-          min-width: 30px;
-          margin-left: 6px;
-          font-weight: normal;
-          &.active {
-            color: #fff;
-            font-weight: bold;
-            background: #FF4343;
-
-          }
+        &.count {
+          font-size: 24px;
+          padding: 30px 0 5px 0;
+          color: #000;
+          font-weight: bold;
         }
       }
     }
   }
+  .tab-title {
+    li {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      span {
+        display: inline-block;
+        padding-right: 10px;
+        border-right: 2px solid #e9e9e9;
+        color: #000;
+        &.last-bd {
+          border-right: 0;
+        }
+        &.active {
+          color: #ff4343;
+          font-weight: bold;
+        }
+      }
+    }
+    li {
+      display: inline-block;
+      padding-bottom: 15px;
+      margin-right: 15px;
+    }
+  }
+  .el-table th {
+    border-bottom: 1px solid #e9e9e9 !important;
+    background: #ffffff !important;
+    border-top: 0 !important;
+    text-align: center !important;
+  }
+  .el-table td {
+    border-top: 0 !important;
+    border: 0 !important;
+    text-align: center !important;
+  }
+  .card.text-center.sale-table {
+    border: 0 !important;
+    box-shadow: 2px 2px 10px #ccc;
+    border-radius: 0 !important;
+
+    .card-body {
+      padding: 0 !important;
+    }
+  }
+  .el-icon-arrow-left:before {
+    content: "上一页" !important;
+  }
+  .el-icon-arrow-right:before {
+    content: "下一页" !important;
+  }
+  .nav-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .total-count {
+      padding-left: 20px;
+      .txt-rd {
+        color: #ff4343;
+        display: inline-block;
+        padding: 0 3px;
+        font-size: 12px;
+      }
+    }
+
+    .el-pagination {
+      padding-right: 20px;
+      margin-top: 15px;
+      text-align: right;
+      margin-bottom: 15px;
+      .btn-next,
+      .btn-prev {
+        background: rgb(232, 235, 237);
+        color: rgb(51, 51, 51);
+        font-size: 14px;
+        margin-left: 6px;
+      }
+      .el-pager li {
+        padding: 0;
+        background: rgb(232, 235, 237);
+        font-size: 14px;
+        color: rgb(51, 51, 51);
+        min-width: 30px;
+        margin-left: 6px;
+        font-weight: normal;
+        &.active {
+          color: #fff;
+          font-weight: bold;
+          background: #ff4343;
+        }
+      }
+    }
+  }
+}
 </style>
