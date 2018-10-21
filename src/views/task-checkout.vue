@@ -1,406 +1,299 @@
 <template>
   <div class="sale-wrap">
-    <b-row>
-      <b-col cols="12" v-if="showAdd">
-        <b-card class="text-center sale-table">
-          <b-row class="table-top">
-            <b-col cols="12" md="4" sm="12">
-              <h6 class="apply-title">发券申请列表</h6>
-            </b-col>
-            <b-col cols="4" md="3">
-              <div class="btn-group search-input">
-                <b-form-input class="search-val" v-model="CodeName"
-                              type="text"
-                              placeholder="输入搜索的券号或券名"></b-form-input>
-                <b-button size="small" @click="searchCard" class="condition">搜索</b-button>
-              </div>
-              <csv-download style="display: none" class="download" :data-json="exportedsaleLists"
-                            v-show="exportedsaleLists.length"></csv-download>
-            </b-col>
-            <b-col cols="9" md="5" sm="12" class="add-col">
-              <div class="btn-group">
-                <b-button size="small" @click="editCard('add','')" class="condition">新增</b-button>
-              </div>
-            </b-col>
-          </b-row>
-          <div class="table-box">
 
-            <!--@row-dbclicked="enterEdit"-->
-            <b-table hover responsive="sm" :items="saleList" :fields="fields" :current-page="page"
-                     :per-page="perPage">
-              <template slot="operation" slot-scope="row">
-                <a size="sm" @click="editCard('edit',row.index)" class="edit-btn">
-                  编辑
-                </a>
-              </template>
-            </b-table>
+    <b-row class="tab-title">
+      <b-col cols="12">
+        <ul>
+          <li>
+            <span class="active">待审核</span>
+          </li>
+
+          <li>
+            <span>已审核</span>
+          </li>
+
+          <li>
+            <span>驳回</span>
+          </li>
+
+          <li>
+            <span class="last-bd">全部</span>
+          </li>
+        </ul>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="12">
+        <b-card class="text-center sale-table">
+          <div class="table-box">
+            <el-table
+              :data="tableData2"
+              style="width: 100%"
+              max-height="480">
+              <el-table-column
+                prop="name"
+                label="发布人">
+              </el-table-column>
+              <el-table-column
+                prop="type"
+                label="任务类型">
+              </el-table-column>
+              <el-table-column
+                prop="title"
+                label="任务标题"
+                width="180">
+                <template slot-scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope, tableData2)"
+                    type="text"
+                    size="small">
+                    {{scope.row.title}}
+                  </el-button>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="price"
+                label="价格">
+              </el-table-column>
+              <el-table-column
+                prop="count"
+                label="数量">
+              </el-table-column>
+              <el-table-column
+                prop="endTime"
+                label="截止时间">
+              </el-table-column>
+              <el-table-column
+                prop="startTime"
+                label="创建时间">
+              </el-table-column>
+            </el-table>
           </div>
-          <nav>
-            <b-pagination align="right" :total-rows="total" :per-page="perPage" v-model="page" prev-text="<"
-                          next-text=">" hide-goto-end-buttons/>
+          <nav class="nav-pagination">
+            <div class="total-count">
+              总共<span class="txt-rd">{{total}}</span>个任务
+            </div>
+            <el-pagination
+              :page-size="20"
+              layout="prev, pager, next, jumper"
+              :total="total">
+            </el-pagination>
+            <!--<b-pagination align="right" :label-page="falg" :number-of-pages="num"  :total-rows="total" :per-page="perPage" v-model="page" prev-text="上一页"-->
+            <!--next-text="下一页"/>-->
           </nav>
         </b-card>
       </b-col>
-      <b-col cols="12" v-if="!showAdd">
-        <b-card class="latelyThirty  sale-table">
-          <p class="everyOrderTitle">{{typeTitle}}</p>
-          <b-form @submit="save">
-            <b-form-group horizontal
-                          label="*券名:"
-                          label-class="text-sm-right"
-                          label-for="nestedStreet"
-                          class="form-title">
-              <b-form-input required class="input" v-model.trim="cardInfo.card_name"></b-form-input>
-            </b-form-group>
-            <b-form-group horizontal
-                          label="*券码:"
-                          label-class="text-sm-right"
-                          label-for="nestedStreet"
-                          class="form-title">
-              <b-form-input required class="input" disabled
-                            v-model.trim="cardInfo.card_no"></b-form-input>
-            </b-form-group>
-            <b-form-group horizontal
-                          label="*类型:"
-                          label-class="text-sm-right"
-                          label-for="nestedStreet"
-                          class="form-title">
-              <b-form-select required v-model="cardInfo.card_type" :options="options" class="input"/>
-            </b-form-group>
-            <b-form-group horizontal
-                          label="*开始时间:"
-                          label-class="text-sm-right"
-                          label-for="nestedStreet"
-                          class="form-title">
-              <el-date-picker
-                v-model="cardInfo.start_time"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
-            </b-form-group>
-            <b-form-group horizontal
-                          label="*结束时间:"
-                          label-class="text-sm-right"
-                          label-for="nestedStreet"
-                          class="form-title">
-              <el-date-picker
-                v-model="cardInfo.end_time"
-                type="date"
-                placeholder="选择日期"
-                :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
-            </b-form-group>
-            <b-button variant="primary" class="add btn" type="submit">保存</b-button>
-            <b-button variant="secondary" class="btn" @click="back">返回</b-button>
-          </b-form>
-        </b-card>
-      </b-col>
+
     </b-row>
-    <b-modal v-model="modalShow"  title="温馨提示">
-      抱歉，没有查询出符合条件的卡券！
-    </b-modal>
   </div>
 </template>
 
 <script>
-
   export default {
     data() {
       return {
-        modalShow:false,
-        CodeName:'',
+        modalShow: false,
+        CodeName: "",
         pickerOptions: {},
-        name: '',
+        name: "",
         saleList: [],
         total: 0,
-        perPage: 15,
+        perPage: 20,
         page: 1,
-        exportedsaleLists: [],
-        fields: {
-//          no: {
-//            label: "序号"
-//          },
-          operation: {
-            label: '操作',
-          },
-          card_no: {
-            label: '券号'
-          },
-          card_name: {
-            label: '券名'
-          },
-          card_type: {
-            label: '类型'
-          },
-          start_time: {
-            label: '开始时间'
-          },
-          end_time: {
-            label: '结束时间'
-          },
-          status: {
-            label: '状态'
-          }
-        }, selected: null,
-        options: [
-          {value: null, text: '请选择卡券类型'},
-          {value: '商品券', text: '商品券'},
-          {value: '折扣券', text: '折扣券'},
-        ],
-        typeTitle: "",
-        showAdd: true,
-        cardInfo: {
-          card_no: "",
-          card_name: '',
-          card_type: "",
-          start_time: "",
-          end_time: "",
-          status: '已提交'
-        },
-        editIndex: 0
-      }
+        tableData2: [],
+        num: 3,
+        falg: true
+      };
     },
     methods: {
-      searchCard(){
-        let localData = JSON.parse(sessionStorage.getItem('cardLists'));
+      searchCard() {
+        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
         let searchData = [];
-        if(this.CodeName) {
-          localData.map((item) =>{
-            if(item.card_no.toString().indexOf(this.CodeName)>-1||item.card_name.indexOf(this.CodeName)>-1){
+        if (this.CodeName) {
+          localData.map(item => {
+            if (
+              item.card_no.toString().indexOf(this.CodeName) > -1 ||
+              item.card_name.indexOf(this.CodeName) > -1
+            ) {
               searchData.push(item);
             }
           });
-          if(!searchData.length){
-            this.modalShow = true
+          if (!searchData.length) {
+            this.modalShow = true;
             this.saleList = localData;
-          }else{
-            this.saleList =searchData;
+          } else {
+            this.saleList = searchData;
           }
-        }else{
+        } else {
           this.saleList = localData;
         }
-
       },
       save() {
-        let localData = JSON.parse(sessionStorage.getItem('cardLists'));
+        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
         this.saleList = localData;
-        if (this.typeTitle === '编辑卡券') {
+        if (this.typeTitle === "编辑卡券") {
           this.saleList[this.editIndex] = this.cardInfo;
         } else {
           this.saleList.unshift(this.cardInfo);
         }
-        sessionStorage.setItem('cardLists', JSON.stringify(this.saleList));
+        sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
         this.showAdd = true;
       },
       back() {
         this.showAdd = true;
       },
+      deleteRow(index, row) {
+        console.log(index);
+      },
+
       editCard(type, index) {
-        if (type === 'edit') {
+        if (type === "edit") {
           this.editIndex = index;
           this.cardInfo = this.saleList[index];
-          this.typeTitle = '编辑卡券';
+          this.typeTitle = "编辑卡券";
         } else {
           this.cardInfo = {
-            card_no: parseInt((new Date()).getTime() / 1000),
-            card_name: '',
+            card_no: parseInt(new Date().getTime() / 1000),
+            card_name: "",
             card_type: "",
             start_time: "",
             end_time: "",
-            status: '已提交'
+            status: "已提交"
           };
           this.editIndex = 0;
-          this.typeTitle = '新增卡券';
+          this.typeTitle = "新增卡券";
         }
         this.showAdd = false;
-      },
+      }
     },
     computed: {},
     mounted() {
-      let data = [
-        {
-          card_no: "1535509633",
-          card_type: "商品券",
-          card_name: '五粮液优惠券',
-          start_time: "2018-9-20",
-          end_time: "2018-10-20",
-          status: "已核销"
-        },
-        {
-          card_no: "1535503332",
-          card_type: "折扣券",
-          card_name: '蒙牛优惠券',
-          start_time: "2018-9-10",
-          end_time: "2018-10-20",
-          status: "已提交"
-        },
-        {
-          card_no: "1535507692",
-          card_type: "商品券",
-          card_name: '伊利优惠券',
-          start_time: "2018-9-20",
-          end_time: "2018-10-09",
-          status: "已审核"
-        },
-        {
-          card_no: "1535504333",
-          card_type: "商品券",
-          card_name: '云南白药优惠券',
-          start_time: "2018-9-20",
-          end_time: "2018-10-10",
-          status: "已核销"
-        },
-        {
-          card_no: "1535505231",
-          card_type: "折扣券",
-          card_name: '烟酒优惠券',
-          start_time: "2018-9-20",
-          end_time: "2018-11-02",
-          status: "已关闭"
-        },
-      ];
-      let localData = sessionStorage.getItem('cardLists');
-      if (localData) {
-        this.saleList = JSON.parse(localData);
-      } else {
-        this.saleList = data;
-        sessionStorage.setItem('cardLists', JSON.stringify(data))
+      for (let i = 0; i < 200; i++) {
+        this.tableData2.push({
+          name: '2016-05-02',
+          type: '注册',
+          title: '微信邀请好友',
+          price: '￥2.3',
+          count: 234,
+          endTime: '2018-10-20 12:34',
+          startTime: '2018-09-20 12:34'
+        });
       }
-      this.total = this.saleList.length;
-
+      this.total = this.tableData2.length;
     }
-  }
+  };
 </script>
 
 <style lang="scss" scoped>
   @media (min-width: 768px) {
     .sale-table {
       margin-bottom: 0;
-
       .table-box {
-        height: 571px;
+        height: auto;
         overflow-y: auto;
       }
     }
-
   }
 
-  .everyOrderTitle {
-    color: #000;
-    line-height: 50px;
-    font-size: 16px;
-    margin-left: 30px;
-    font-weight: 800;
-  }
-
-  .edit-btn {
-    color: rgb(32, 168, 216) !important;
-    border-bottom: solid 1px rgb(32, 168, 216);
-    cursor: pointer;
-  }
-
-  .apply-title {
-    text-align: left;
-    font-size: 16px;
-    font-weight: 800;
-  }
-
-  .sale-wrap {
-    padding: 20px 0;
-
-  }
-
-  .latelyThirty /deep/ {
-    background: #fff;
-    padding-bottom: 10px;
-
-    .input {
-      width: 50%;
+  //列表和头部的公共样式
+  .sale-wrap /deep/ {
+    * {
+      outline: none !important;
     }
-
-    .btn {
-      margin-top: 30px;
-      display: inline-block;
-      width: 180px
+    width: 100%;
+    .tab-title {
+      ul,
+      li {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        span {
+          display: inline-block;
+          padding-right: 10px;
+          border-right: 2px solid #e9e9e9;
+          color: #000;
+          &.last-bd {
+            border-right: 0;
+          }
+          &.active {
+            color: #ff4343;
+            font-weight: bold;
+          }
+        }
+      }
+      li {
+        display: inline-block;
+        padding-bottom: 15px;
+        margin-right: 15px;
+      }
     }
-    .add {
-      margin-left: 30%;
-      margin-right: 80px;
+    .el-table th {
+      border-bottom: 1px solid #e9e9e9 !important;
+      background: #ffffff !important;
+      border-top: 0 !important;
+      text-align: center !important;
     }
-  }
+    .el-table td {
+      border-top: 0 !important;
+      border: 0 !important;
+      text-align: center !important;
+    }
+    .card.text-center.sale-table {
+      border: 0 !important;
+      box-shadow: 2px 2px 10px #ccc;
+      border-radius: 0 !important;
 
-  .form-title {
-    margin-right: 50px;
-  }
-
-  .sale-table /deep/ {
-
-    .table-top {
+      .card-body {
+        padding: 0 !important;
+      }
+    }
+    .el-icon-arrow-left:before {
+      content: '上一页' !important;
+    }
+    .el-icon-arrow-right:before {
+      content: '下一页' !important;
+    }
+    .nav-pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: #000;
-      margin-bottom: 10px;
-
-      h4 {
-        width: 40%;
-        flex-grow: 1;
-        padding: 15px 10px;
+      .total-count{
+        padding-left: 20px;
+        .txt-rd{
+          color: #FF4343;
+          display: inline-block;
+          padding: 0 3px;
+          font-size: 12px;
+        }
       }
 
-      .download {
-        flex-grow: 1;
-      }
-
-      .add-col {
+      .el-pagination {
+        padding-right: 20px;
+        margin-top: 15px;
         text-align: right;
-        padding-right: 30px;
-      }
-
-      .btn-group {
-        flex-grow: 0;
-        &.search-input{
-          width: 100%;
-          .search-val{
-            border:1px solid rgb(8, 121, 208);
-          }
+        margin-bottom: 15px;
+        .btn-next, .btn-prev {
+          background: rgb(232, 235, 237);
+          color: rgb(51, 51, 51);
+          font-size: 14px;
+          margin-left: 6px;
         }
-
-        .condition {
-          background: transparent;
-          color: #0879D0;
-          border-color: #4B99FF;
-
+        .el-pager li {
+          padding: 0;
+          background: rgb(232, 235, 237);
+          font-size: 14px;
+          color: rgb(51, 51, 51);
+          min-width: 30px;
+          margin-left: 6px;
+          font-weight: normal;
           &.active {
-            background: #0879D0;
             color: #fff;
-          }
+            font-weight: bold;
+            background: #FF4343;
 
-          &:active {
-            background: #0879D0;
-            opacity: 0.9;
-            color: #fff;
           }
-
-          &:hover {
-            background: #0879D0;
-            opacity: 0.7;
-            color: #fff;
-          }
-
         }
       }
     }
-    .table th {
-      border-top: 0 !important;
-    }
-
   }
-
-
 </style>
