@@ -29,7 +29,7 @@
             <el-table
               :data="tableData2"
               style="width: 100%"
-              max-height="480">
+              max-height="700">
               <el-table-column
                 prop="name"
                 label="发布人">
@@ -142,9 +142,9 @@
       back() {
         this.showAdd = true;
       },
-      deleteRow(index, row) {
-        console.log(index);
-      },
+      // deleteRow(index, row) {
+      //   console.log(index);
+      // },
 
       editCard(type, index) {
         if (type === "edit") {
@@ -170,16 +170,35 @@
     mounted() {
       for (let i = 0; i < 200; i++) {
         this.tableData2.push({
-          name: '2016-05-02',
-          type: '注册',
-          title: '微信邀请好友',
-          price: '￥2.3',
+          name: "2016-05-02",
+          type: "注册",
+          title: "微信邀请好友",
+          price: "￥2.3",
           count: 234,
-          endTime: '2018-10-20 12:34',
-          startTime: '2018-09-20 12:34'
+          endTime: "2018-10-20 12:34",
+          startTime: "2018-09-20 12:34"
         });
       }
       this.total = this.tableData2.length;
+      const options = {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        data: {
+          userLoginVO: {
+            "mobile": "4634",
+            "pwd": "123456",
+            "verifyCode": "1234"
+          }
+        },
+        url: 'http://47.107.33.234/accout/userTransDetail',
+      };
+      this.$http.post(process.env.VUE_APP_HOST+'accout/userTransDetail',  {
+        "lastTransTime": 0,
+        "size": 10
+      })
+        .then(res => {console.log(res)}), err => {
+        console.error('失败', err)
+      }
     }
   };
 </script>
@@ -248,19 +267,19 @@
       }
     }
     .el-icon-arrow-left:before {
-      content: '上一页' !important;
+      content: "上一页" !important;
     }
     .el-icon-arrow-right:before {
-      content: '下一页' !important;
+      content: "下一页" !important;
     }
     .nav-pagination {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      .total-count{
+      .total-count {
         padding-left: 20px;
-        .txt-rd{
-          color: #FF4343;
+        .txt-rd {
+          color: #ff4343;
           display: inline-block;
           padding: 0 3px;
           font-size: 12px;
@@ -272,7 +291,8 @@
         margin-top: 15px;
         text-align: right;
         margin-bottom: 15px;
-        .btn-next, .btn-prev {
+        .btn-next,
+        .btn-prev {
           background: rgb(232, 235, 237);
           color: rgb(51, 51, 51);
           font-size: 14px;
@@ -289,8 +309,7 @@
           &.active {
             color: #fff;
             font-weight: bold;
-            background: #FF4343;
-
+            background: #ff4343;
           }
         }
       }

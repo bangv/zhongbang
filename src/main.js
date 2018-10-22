@@ -12,9 +12,12 @@ import '@coreui/coreui/scss/coreui.scss'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './global.css'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 Vue.use(BootstrapVue);
 Vue.use(ElementUI);
+Vue.use(VueAxios, axios)
 Vue.config.productionTip = false;
 
 new Vue({

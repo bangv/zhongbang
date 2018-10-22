@@ -44,6 +44,14 @@
           </li>
 
           <li>
+            <span>待付款</span>
+          </li>
+
+          <li>
+            <span>已付款</span>
+          </li>
+
+          <li>
             <span>驳回</span>
           </li>
           <li>
@@ -199,7 +207,6 @@ export default {
   },
   computed: {},
   mounted() {
-    console.log(router)
     for (let i = 0; i < 200; i++) {
       this.tableData2.push({
         name: "2016-05-02",

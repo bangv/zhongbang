@@ -5,15 +5,15 @@
       <b-col cols="12">
         <ul>
           <li>
-            <span class="active">待审核</span>
+            <span class="active">待处理</span>
           </li>
 
           <li>
-            <span>已审核</span>
+            <span>已处理</span>
           </li>
 
           <li>
-            <span>驳回</span>
+            <span>完结</span>
           </li>
 
           <li>
@@ -29,7 +29,7 @@
             <el-table
               :data="tableData2"
               style="width: 100%"
-              max-height="480">
+              max-height="700">
               <el-table-column
                 prop="name"
                 label="发布人">

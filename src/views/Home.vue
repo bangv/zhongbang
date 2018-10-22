@@ -24,17 +24,17 @@
     </AppHeader>
     <div class="app-body" ref="Sidebar">
       <div class="side">
-        <el-menu default-active="task" background-color="#ffffff" text-color="#999999"
+        <el-menu :default-active="$route.path" background-color="#ffffff" text-color="#999999"
                  active-text-color="#ff4343" router="router">
-          <el-menu-item index="task">
+          <el-menu-item index="/task">
             <span class="side-bg side-ioc-bg-1"></span>
             <span slot="title">任务审核</span>
           </el-menu-item>
-          <el-menu-item index="reflect">
+          <el-menu-item index="/reflect">
             <span class="side-bg side-ioc-bg-2"></span>
             <span slot="title">提现审核</span>
           </el-menu-item>
-          <el-menu-item index="apply">
+          <el-menu-item index="/apply">
             <span class="side-bg side-ioc-bg-3"></span>
             <span slot="title">申诉处理</span>
           </el-menu-item>
@@ -75,7 +75,7 @@ export default {
   },
   data() {
     return {
-      router: true,
+      router: true, //是否启动路由模式Nav
       nav: nav.items,
       nowDate: "",
       nowDay: "",
@@ -90,17 +90,20 @@ export default {
     }
   },
   methods: {
+    routeName() {
+      return this.$route;
+    },
     //退出
     logout() {
       this.$router.push({ path: "/login" });
     }
   },
   computed: {
-    name() {
-      return this.$route.name;
-    }
+
   },
-  mounted() {}
+  mounted() {
+    this.routeName();
+  }
 };
 </script>
 
@@ -174,11 +177,19 @@ export default {
 }
 
 .app /deep/ {
+  .app-body{
+    margin-top: 0!important;
+  }
   .app-header {
     background: #fff;
     font-size: 14px;
     border: 0 none;
     color: #24282f;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0 !important;
+    position: inherit !important;
     .navbar-brand {
       width: 66px;
       display: inline-block;
@@ -216,7 +227,7 @@ export default {
 .main .main-content {
   position: relative;
   height: 100%;
-  padding: 20px 20px!important;
+  padding: 20px 20px !important;
 }
 
 .app-headers {
