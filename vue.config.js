@@ -1,7 +1,11 @@
 module.exports = {
   // options...
-  lintOnSave: false,
   devServer: {
-    proxy: 'http://47.107.33.234'
+    proxy: {
+      "/zhongbang": {
+        target: "http://47.107.33.234",
+        // pathRewrite: { "^/zhongbang": "" }
+      }
+    }
   }
-}
+};
