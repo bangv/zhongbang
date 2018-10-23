@@ -14,7 +14,7 @@
 
             </div>
             <div>
-              <p>
+              <p class="mg-bt">
                 <span class="point has"></span><span>已审核</span>
               </p>
               <p>
@@ -235,9 +235,12 @@
             background: #D8DBDB;
             margin-right: 5px;
             &.has {
-              background: rgb(255, 67, 67);
+              background: #FF9364;
             }
           }
+        }
+        .mg-bt{
+          margin-bottom: 15px;
         }
         .count-b {
           font-size: 30px;
