@@ -1,3 +1,6 @@
+body{
+  background: #fff;
+}
 i{
   margin-right: 5px;
 }
@@ -21,6 +24,7 @@ thead th{
 .el-select-dropdown__item.selected{
   color: #BF0505;
 }
+
 /*添加按钮*/
 .add-btn {
   background-color: #fff;

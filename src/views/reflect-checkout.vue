@@ -1,37 +1,5 @@
 <template>
   <div class="sale-wrap">
-    <b-row class="tab-total">
-       <b-col cols="12">
-        <ul>
-          <li class="red">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-
-          <li class="green">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-
-          <li class="blue">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-          <li class="red">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-          <li class="green">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-          <li class="blue last-mr">
-            <span class="count">2300</span>
-            <span class="total-content">任务币总量</span>
-          </li>
-        </ul>
-      </b-col>
-    </b-row>
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
@@ -67,7 +35,7 @@
             <el-table
               :data="tableData2"
               style="width: 100%"
-              max-height="480">
+              max-height="700">
               <el-table-column
                 prop="name"
                 label="发布人">
@@ -246,50 +214,6 @@ export default {
     outline: none !important;
   }
   width: 100%;
-  .tab-total {
-    ul {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    li {
-      margin-right: 20px;
-      display: inline-block;
-      flex: 1;
-      background: #fff;
-      box-shadow: 2px 2px 10px #ccc;
-      margin-bottom: 15px;
-      &.last-mr{
-        margin-right: 0;
-      }
-      &.red {
-        background: url("../assets/red.png") no-repeat top left;
-        background-size: 100% 2px;
-      }
-      &.green {
-        background: url("../assets/green.png") no-repeat top left;
-        background-size: 100% 2px;
-      }
-      &.blue {
-        background: url("../assets/blue.png") no-repeat top left;
-        background-size: 100% 2px;
-      }
-      span {
-        display: block;
-        text-align: center;
-        color: #666;
-        &.total-content {
-          padding-bottom: 30px;
-        }
-        &.count {
-          font-size: 24px;
-          padding: 30px 0 5px 0;
-          color: #000;
-          font-weight: bold;
-        }
-      }
-    }
-  }
   .tab-title {
     li {
       padding: 0;

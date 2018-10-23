@@ -1,26 +1,7 @@
 <template>
   <div class="app">
-    <div class="app-headers">
-      <div class="fix-bar">
-        <SidebarToggler class="d-md-down-none" display="lg"/>
-        <SidebarToggler class="d-lg-none" display="md" mobile/>
-      </div>
-    </div>
     <AppHeader fixed>
-      <div class="navbar-brand">
-        <img class="navbar-brand-full" src="../assets/logo.png" width="40" height="38" title="众帮互助" alt="众帮互助">
-      </div>
-      <div class="header-time navbar-nav">众帮互助
-      </div>
-      <div class="header-content navbar-nav ml-auto">
-        <span class="logout" @click="logout">
-          <img src="../assets/logout-bg.png" width="27" height="27" title="安全退出"/>
-        </span>
-        <span class="logout">
-          <img src="../assets/logout-bg.png" width="27" height="27" title="头像"/>
-        </span>
-        <span>{{user}} </span>
-      </div>
+      <header-top></header-top>
     </AppHeader>
     <div class="app-body" ref="Sidebar">
       <div class="side">
@@ -61,10 +42,12 @@ import {
   SidebarHeader,
   SidebarMinimizer
 } from "@coreui/vue";
+import HeaderTop from "../components/headerTop";
 
 export default {
   name: "full",
   components: {
+    "header-top": HeaderTop,
     AppHeader,
     AppSidebar,
     SidebarForm,
@@ -80,7 +63,6 @@ export default {
       nowDate: "",
       nowDay: "",
       timeNow: "",
-      user: "张三"
     };
   },
   filters: {
@@ -92,16 +74,11 @@ export default {
   methods: {
     routeName() {
       return this.$route;
-    },
-    //退出
-    logout() {
-      this.$router.push({ path: "/login" });
     }
   },
-  computed: {
-
-  },
+  computed: {},
   mounted() {
+    console.log("home页面");
     this.routeName();
   }
 };
@@ -176,52 +153,9 @@ export default {
   }
 }
 
-.app /deep/ {
-  .app-body{
-    margin-top: 0!important;
-  }
-  .app-header {
-    background: #fff;
-    font-size: 14px;
-    border: 0 none;
-    color: #24282f;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    margin-left: 0 !important;
-    position: inherit !important;
-    .navbar-brand {
-      width: 66px;
-      display: inline-block;
-      text-align: right;
-      line-height: 50px;
-    }
-    .header-time {
-      line-height: 50px;
-      height: 56px;
-      font-size: 12px;
-      display: inline-block;
-    }
-    .header-content {
-      padding-right: 18px;
-      & > span {
-        font-size: 12px;
-        margin-right: 8px;
-      }
-      .logout {
-        text-align: center;
-        width: 27px;
-        height: 27px;
-        border-radius: 50%;
-        margin-left: 15px;
-        cursor: pointer;
-      }
-    }
-  }
-  .main {
-    margin-left: 90px;
-    background: rgb(247, 249, 249);
-  }
+.main {
+  margin-left: 90px;
+  background: rgb(247, 249, 249);
 }
 
 .main .main-content {
@@ -229,18 +163,11 @@ export default {
   height: 100%;
   padding: 20px 20px !important;
 }
-
-.app-headers {
-  height: 0;
-  width: 100%;
-  background: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1999;
-  overflow: hidden;
-  .fix-bar {
-    display: none;
-  }
+.app-header {
+  width: 100% !important;
+  background: #fff !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 </style>

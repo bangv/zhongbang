@@ -5,6 +5,7 @@ import Home from "./views/Home.vue";
 import task from "./views/task-checkout.vue";
 import apply from "./views/apply-checkout.vue";
 import reflect from "./views/reflect-checkout.vue";
+import TaskDetail from "./views/task-detail";
 import PageLogin from "./views/PageLogin";
 
 Vue.use(Router);
@@ -12,9 +13,19 @@ Vue.use(Router);
 let router = new Router({
   routes: [
     {
+      path:'/',
+      name: '',
+      component: PageLogin,
+    },
+    {
       path: "/login",
       name: "Login",
       component: PageLogin
+    },
+    {
+      path: "/task-detail",
+      name: "TaskDetail",
+      component: TaskDetail
     },
     {
       path: "/home",
