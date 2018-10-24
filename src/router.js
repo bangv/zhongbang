@@ -9,6 +9,7 @@ import TaskDetail from "./views/task-detail";
 import reflectDetail from "./views/reflect-detail";
 import applyDetail from "./views/apply-detail";
 import PageLogin from "./views/PageLogin";
+import Forget from "./views/forget";
 
 Vue.use(Router);
 
@@ -23,6 +24,11 @@ let router = new Router({
       path: "/login",
       name: "Login",
       component: PageLogin
+    },
+    {
+      path: "/forget",
+      name: "forget",
+      component: Forget
     },
     {
       path: "/task-detail",
