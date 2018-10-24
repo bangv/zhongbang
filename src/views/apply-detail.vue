@@ -6,7 +6,7 @@
     <div class="app-body">
       <div class="content">
         <div class="detail-head">
-          <p class="list-title">任务统计</p>
+          <p class="list-title">申诉统计</p>
           <div class="content-chart">
             <div class="chart">
               <el-progress type="circle" :percentage="80" :show-text="showTxt" :width="chartWidth"
@@ -15,28 +15,28 @@
             </div>
             <div>
               <p class="mg-bt">
-                <span class="point has"></span><span>已审核</span>
+                <span class="point has"></span><span>已处理</span>
               </p>
               <p>
-                <span class="point"></span><span>待审核</span>
+                <span class="point"></span><span>待处理</span>
               </p>
             </div>
             <div>
               <p class="count-b">80</p>
-              <p class="content-b">已审核</p>
+              <p class="content-b">已处理</p>
             </div>
             <div>
               <p class="count-b">20</p>
-              <p class="content-b">待审核</p>
+              <p class="content-b">待处理</p>
             </div>
             <div>
               <p class="count-b">100</p>
-              <p class="content-b">任务总数量</p>
+              <p class="content-b">总申诉数</p>
             </div>
           </div>
         </div>
-        <div class="detail-head">
-          <p class="list-title">任务详情</p>
+        <div class="detail-head pd-100">
+          <p class="list-title">申诉详情</p>
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
@@ -86,27 +86,12 @@
               <span class="detail-title">备注：</span><span>{{tip}}</span>
             </div>
           </div>
-          <div class="pic-content">
-            <div class="proving-pic">
-              <p class="pic-title">---验证图---</p>
-              <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
-              </div>
-            </div>
-            <div class="proving-pic">
-              <p class="pic-title">---操作步骤---</p>
-              <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn">通过</el-button>
-            <el-button class="btn btn-margin">驳回</el-button>
+            <el-button class="btn">查看详情</el-button>
+            <el-button class="btn btn-margin">已处理</el-button>
+            <el-button class="btn btn-margin">已完结</el-button>
             <el-button class="btn btn-margin">下一个</el-button>
             <el-button class="btn btn-margin">返回</el-button>
           </el-row>
@@ -291,6 +276,9 @@
         border: 0;
         box-shadow: 2px 2px 10px #ccc;
         border-radius: 2px;
+        &.pd-100{
+          padding-bottom: 100px;
+        }
       }
       .list-title {
         padding-left: 5px;
@@ -440,6 +428,7 @@
           }
 
         }
+
       }
 
     }

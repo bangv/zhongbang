@@ -35,8 +35,8 @@
             </div>
           </div>
         </div>
-        <div class="detail-head">
-          <p class="list-title">任务详情</p>
+        <div class="detail-head pd-100">
+          <p class="list-title">提现详情</p>
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
@@ -84,22 +84,6 @@
           <div class="publisher-content">
             <div class="row big">
               <span class="detail-title">备注：</span><span>{{tip}}</span>
-            </div>
-          </div>
-          <div class="pic-content">
-            <div class="proving-pic">
-              <p class="pic-title">---验证图---</p>
-              <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
-              </div>
-            </div>
-            <div class="proving-pic">
-              <p class="pic-title">---操作步骤---</p>
-              <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
-              </div>
             </div>
           </div>
         </div>
@@ -291,6 +275,9 @@
         border: 0;
         box-shadow: 2px 2px 10px #ccc;
         border-radius: 2px;
+        &.pd-100{
+        padding-bottom: 100px;
+      }
       }
       .list-title {
         padding-left: 5px;
@@ -441,7 +428,6 @@
 
         }
       }
-
     }
 
   }

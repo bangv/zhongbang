@@ -143,7 +143,11 @@
         this.showAdd = true;
       },
       deleteRow(index, row) {
-        console.log(index);
+        console.log(index)
+        this.$router.push({
+          path: '/apply-detail',
+          query:{id:index.$index}
+        })
       },
 
       editCard(type, index) {
@@ -211,7 +215,10 @@
           display: inline-block;
           padding-right: 10px;
           border-right: 2px solid #e9e9e9;
-          color: #000;
+          color: #000;;
+          font-size: 16px;
+          cursor: pointer;
+
           &.last-bd {
             border-right: 0;
           }

@@ -146,7 +146,7 @@
       deleteRow(index, row) {
         console.log(index)
         this.$router.push({
-          path: `/task-detail`,
+          path: '/task-detail',
           query:{id:index.$index}
         })
       },
@@ -257,6 +257,8 @@
           padding-right: 10px;
           border-right: 2px solid #e9e9e9;
           color: #000;
+          font-size: 16px;
+          cursor: pointer;
           &.last-bd {
             border-right: 0;
           }

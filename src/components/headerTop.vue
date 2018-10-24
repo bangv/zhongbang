@@ -72,11 +72,12 @@ export default {
     width: 66px;
     display: inline-block;
     text-align: right;
-    line-height: 50px;
+    line-height: 76px;
+    height: 70px;
   }
   .header-time {
-    line-height: 50px;
-    height: 56px;
+    line-height: 70px;
+    height: 70px;
     font-size: 22px;
     display: inline-block;
   }

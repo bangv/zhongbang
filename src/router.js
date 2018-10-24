@@ -6,6 +6,8 @@ import task from "./views/task-checkout.vue";
 import apply from "./views/apply-checkout.vue";
 import reflect from "./views/reflect-checkout.vue";
 import TaskDetail from "./views/task-detail";
+import reflectDetail from "./views/reflect-detail";
+import applyDetail from "./views/apply-detail";
 import PageLogin from "./views/PageLogin";
 
 Vue.use(Router);
@@ -26,6 +28,16 @@ let router = new Router({
       path: "/task-detail",
       name: "TaskDetail",
       component: TaskDetail
+    },
+    {
+      path: "/reflect-detail",
+      name: "reflectDetail",
+      component: reflectDetail
+    },
+    {
+      path: "/apply-detail",
+      name: "applyDetail",
+      component: applyDetail
     },
     {
       path: "/home",

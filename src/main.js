@@ -14,6 +14,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './global.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import 'babel-polyfill'
 
 Vue.use(BootstrapVue);
 Vue.use(ElementUI);
