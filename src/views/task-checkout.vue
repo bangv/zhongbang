@@ -96,7 +96,7 @@
         tableData2: [],
         tabIndex: 1,
         //加载圈
-        loading:true,
+        loading: true,
 
       };
     },
@@ -109,6 +109,7 @@
 
       //切换tab方法
       tabChange(index) {
+        if (this.tabIndex === index) return;
         this.tabIndex = index;
         this.loading = true;
         this.loadSpiner();
@@ -121,7 +122,7 @@
       goDetail(index) {
         this.$router.push({
           path: '/task-detail',
-          query: {id: index.$index,tabIndex:this.tabIndex}
+          query: {id: index.$index, tabIndex: this.tabIndex}
         })
       },
 
@@ -137,7 +138,7 @@
           count: 234,
           endTime: "2018-10-20 12:34",
           startTime: "2018-09-20 12:34",
-          status:i
+          status: i
         });
       }
       setTimeout(() => {

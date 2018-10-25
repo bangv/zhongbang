@@ -110,6 +110,7 @@
       },
       //切换tab方法
       tabChange(index) {
+        if (this.tabIndex === index) return;
         this.tabIndex = index;
         this.loading = true;
         this.loadSpiner();
