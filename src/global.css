@@ -2,8 +2,6 @@ body {
     background: #fff;
 }
 
-
-
 i {
     margin-right: 5px;
 }
@@ -46,14 +44,83 @@ thead th {
     color: #fff;
     border: 0;
     font-size: 16px;
-    outline: none!important;
+    outline: none !important;
 }
 
 .btn-wrap .btn-margin {
     margin-left: 30px;
 }
-.btn-wrap .btn:active{
-    outline: none!important;
+
+.btn-wrap .btn:active {
+    outline: none !important;
+}
+
+/*驳回弹框样式*/
+.dialog-title .el-dialog__header {
+    background: #F7F9FA;
+    padding: 10px;
+    text-align: left;
+}
+
+.dialog-title .el-dialog__headerbtn {
+    top: 8px;
+    right: 5px;
+}
+
+.dialog-title .el-dialog__footer {
+    padding: 20px;
+    text-align: center;
+}
+
+.dialog-title .el-button {
+    padding: 10px 25px;
+    background: #E2E2E2;
+    color: #666;
+    border: 0;
+    outline: 0;
+    width: 120px;
+}
+
+.dialog-title .el-button + .el-button {
+    margin-left: 40px;
+}
+
+.dialog-title .el-dialog__body {
+    padding: 15px;
+}
+
+.dialog-title .el-button.el-button--primary {
+    background: #FF4343;
+    color: #fff;
+}
+
+.dialog-title .text-content {
+    width: 100%;
+    color: #BBBBBB;
+    background: #F7F9FA;
+    border: 0;
+    outline: 0;
+}
+
+.dialog-title .payment-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-title .payment-content p {
+    flex: 1;
+    text-align: left;
+    margin-top: 10px;
+}.dialog-title .payment-content p.pd-30 {
+     padding-left: 30px;
+ }
+
+.dialog-title .payment-content p span {
+    color: #333;
+}
+.dialog-title .payment-content p .detail-title {
+    color: #999;
 }
 
 

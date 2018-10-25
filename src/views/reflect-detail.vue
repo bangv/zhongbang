@@ -38,7 +38,7 @@
         <div class="detail-head pd-100">
           <p class="list-title">提现详情</p>
           <div class="publisher-wrap">
-            <span class="publisher">发布方：</span>
+            <span class="publisher">申请人：</span>
             <div class="head-sculpture">
               <img src="../assets/logout-bg.png"/>
             </div>
@@ -49,55 +49,77 @@
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">标题：</span><span>{{title}}</span></div>
-              <div><span class="detail-title">编号：</span><span>{{id}}</span></div>
+              <div class="w-30"><span class="detail-title">提现类别：</span><span>任务币提现</span></div>
+              <div><span class="detail-title">单号：</span><span>6859</span></div>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">类型：</span><span>{{type}}</span></div>
-              <span class="detail-title">数量：</span><span>{{number}}</span>
+              <div class="w-30"><span class="detail-title">提现现金：</span><span>45元</span></div>
+              <span class="detail-title">申请时间：</span><span>2018-10-20 12:00</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">单价：</span><span>{{price}}元</span></div>
-              <span class="detail-title">支持设备：</span><span class="col02">{{equipment}}</span>
+              <div class="w-30"><span class="detail-title">支付宝账号：</span><span>158***8525</span></div>
+              <span class="detail-title">支付宝姓名：</span><span class="col02">{{publisherName}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">任务创建时间：</span><span>{{createTime}}</span></div>
-              <span class="detail-title">任务截止时间：</span><span>{{endTime}}</span>
+              <div class="w-30"><span class="detail-title">上次提现金额：</span><span>600元</span></div>
+              <span class="detail-title">上次提现类别：</span><span>保证金提现</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">文字验证：</span><span>{{text}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <span class="detail-title">任务链接：</span><span>{{link}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row big">
-              <span class="detail-title">备注：</span><span>{{tip}}</span>
+              <div class="w-30"><span class="detail-title">会员等级：</span><span>青铜会员</span></div>
+              <span class="detail-title">账户余额：</span><span>123元</span>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
             <el-button class="btn">通过</el-button>
-            <el-button class="btn btn-margin">驳回</el-button>
+            <el-button class="btn btn-margin" @click="rejectFtn">驳回</el-button>
+            <el-button class="btn btn-margin" @click="paymentDialog">转账</el-button>
             <el-button class="btn btn-margin">下一个</el-button>
-            <el-button class="btn btn-margin">返回</el-button>
+            <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
       </div>
-
     </div>
+    <el-dialog
+      :title="DialogTitle"
+      :visible.sync="rejectDialog"
+      width="400px"
+      :close-on-click-modal="noModal"
+      :close-on-press-escape="noESC"
+      :before-close="handleClose" class="dialog-title" center>
+      <textarea v-if="!isReject" rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
+      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
+      </textarea>
+      <div v-if="isReject">
+        <div class="payment-content">
+          <p><span class="detail-title">申诉人：</span><span>微猫微视</span></p>
+          <p class="pd-30"><span class="detail-title">单号：</span><span>2586</span></p>
+        </div>
+        <div class="payment-content">
+          <p><span class="detail-title">支付宝账号：</span><span>135****8695</span></p>
+          <p class="pd-30"><span class="detail-title">支付宝姓名：</span><span>张三</span></p>
+        </div>
+
+        <div class="payment-content">
+          <p><span class="detail-title">提现类别：</span><span>任务币提现</span></p>
+          <p class="pd-30"><span class="detail-title">提现金额：</span><span>600</span></p>
+        </div>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="rejectDialog = false">取 消</el-button>
+    <el-button type="primary" @click="rejectDialog = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -113,142 +135,71 @@
     },
     data() {
       return {
+        //只能通过关闭按钮关
+        noModal: false,
+        noESC: false,
+        //驳回弹框
+        rejectDialog: false,
+        //是否为驳回 反之为付款
+        isReject: false,
+        //弹框标题
+        DialogTitle: '',
         //进度条
         showTxt: true,
         //进度条线宽度
         chartBorder: 10,
         //进度宽度
         chartWidth: 100,
-        modalShow: false,
-        CodeName: "",
-        pickerOptions: {},
-        name: "",
-        saleList: [],
+        //类型的序列号
+        tabIndex: 0,
+        //加载圈
+        loading: '',
         total: 0,
         perPage: 20,
         page: 1,
         tableData2: [],
-        num: 3,
-        falg: true,
         publisherName: "微猫微视",
         publisherID: 557313,
-        title: "微信欲加好友解封帮助",
-        id: 652312,
-        type: "其他",
-        number: 3412,
-        price: 50,
-        equipment: "安卓",
-        createTime: "2018/08/21",
-        endTime: "2018/09/21",
-        text: "微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无效",
-        link: "https://www.baidu.com/",
-        tip: "接单前请仔细阅读以下操作步骤并满足所有条件，没满18岁的不要接单。不满足条件的，没诚心的，不愿意等的，不要接单。"
       };
     },
     methods: {
+      handleClose: function () {
+        this.rejectDialog = false;
+      },
+      //驳回
+      rejectFtn: function () {
+        this.DialogTitle = '驳回';
+        this.isReject = false;
+        this.rejectDialog = true;
+      },
+      //转账
+      paymentDialog: function () {
+        this.rejectDialog = true;
+        this.DialogTitle = '提现转账';
+        this.isReject = true;
+      },
       //返回
-      goback() {
+      back() {
         this.$router.go(-1);
       },
-      searchCard() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        let searchData = [];
-        if (this.CodeName) {
-          localData.map(item => {
-            if (
-              item.card_no.toString().indexOf(this.CodeName) > -1 ||
-              item.card_name.indexOf(this.CodeName) > -1
-            ) {
-              searchData.push(item);
-            }
-          });
-          if (!searchData.length) {
-            this.modalShow = true;
-            this.saleList = localData;
-          } else {
-            this.saleList = searchData;
-          }
-        } else {
-          this.saleList = localData;
-        }
-      },
-      save() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        this.saleList = localData;
-        if (this.typeTitle === "编辑卡券") {
-          this.saleList[this.editIndex] = this.cardInfo;
-        } else {
-          this.saleList.unshift(this.cardInfo);
-        }
-        sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
-        this.showAdd = true;
-      },
-      back() {
-        this.showAdd = true;
-      },
-      // deleteRow(index, row) {
-      //   console.log(index);
-      // },
-
-      editCard(type, index) {
-        if (type === "edit") {
-          this.editIndex = index;
-          this.cardInfo = this.saleList[index];
-          this.typeTitle = "编辑卡券";
-        } else {
-          this.cardInfo = {
-            card_no: parseInt(new Date().getTime() / 1000),
-            card_name: "",
-            card_type: "",
-            start_time: "",
-            end_time: "",
-            status: "已提交"
-          };
-          this.editIndex = 0;
-          this.typeTitle = "新增卡券";
-        }
-        this.showAdd = false;
-      }
     },
     computed: {},
     mounted() {
       console.log("=====", this.$route.query.id);
-      for (let i = 0; i < 200; i++) {
-        this.tableData2.push({
-          name: "2016-05-02",
-          type: "注册",
-          title: "微信邀请好友",
-          price: "￥2.3",
-          count: 234,
-          endTime: "2018-10-20 12:34",
-          startTime: "2018-09-20 12:34"
-        });
-      }
-      this.total = this.tableData2.length;
-      this.$http
-        .post(process.env.VUE_APP_HOST + "/user/login", {
-          mobile: "4634",
-          pwd: "123456",
-          verifyCode: "1234"
-        })
-        .then(res => {
-          this.$message("登录成功");
-          console.log(res);
-        }),
-        err => {
-          console.error("失败", err);
-        };
-      this.$http
-        .post(process.env.VUE_APP_HOST + "/accout/userTransDetail", {
-          lastTransTime: 0
-          //     "size": 10
-        })
-        .then(res => {
-          console.log(res);
-        }),
-        err => {
-          console.error("失败", err);
-        };
+      console.log("=====", this.$route.query.tabIndex);
+      this.tabIndex = this.$route.query.tabIndex;
+      this.loading = this.$loading({
+        lock: true,
+        text: '加载中',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.8)',
+      });
+      setTimeout(() => {
+        this.loading.close();
+      }, 2000);
+    },
+    destroyed: function () {
+      this.loading.close();
     }
   };
 </script>
@@ -275,9 +226,9 @@
         border: 0;
         box-shadow: 2px 2px 10px #ccc;
         border-radius: 2px;
-        &.pd-100{
-        padding-bottom: 100px;
-      }
+        &.pd-100 {
+          padding-bottom: 100px;
+        }
       }
       .list-title {
         padding-left: 5px;

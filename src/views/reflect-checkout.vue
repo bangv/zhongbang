@@ -3,27 +3,27 @@
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
-          <li>
-            <span class="active">待审核</span>
+          <li @click="tabChange(1)">
+            <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待审核</span>
           </li>
 
-          <li>
-            <span>已审核</span>
+          <li @click="tabChange(2)">
+            <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已审核</span>
           </li>
 
-          <li>
-            <span>待付款</span>
+          <li @click="tabChange(3)">
+            <span :class="{'active':tabIndex==3,'':tabIndex!=3}">待付款</span>
           </li>
 
-          <li>
-            <span>已付款</span>
+          <li @click="tabChange(4)">
+            <span :class="{'active':tabIndex==4,'':tabIndex!=4}">已付款</span>
           </li>
 
-          <li>
-            <span>驳回</span>
+          <li @click="tabChange(5)">
+            <span :class="{'active':tabIndex==5,'':tabIndex!=5}">驳回</span>
           </li>
-          <li>
-            <span class="last-bd">全部</span>
+          <li @click="tabChange(6)">
+            <span class="last-bd" :class="{'active':tabIndex==6,'':tabIndex!=6}">全部</span>
           </li>
         </ul>
       </b-col>
@@ -35,7 +35,7 @@
             <el-table
               :data="tableData2"
               style="width: 100%"
-              max-height="700">
+              max-height="700" v-loading="loading">
               <el-table-column
                 prop="name"
                 label="发布人">
@@ -50,7 +50,7 @@
                 width="180">
                 <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="deleteRow(scope, tableData2)"
+                    @click.native.prevent="goDetail(scope)"
                     type="text"
                     size="small">
                     {{scope.row.title}}
@@ -84,8 +84,6 @@
               layout="prev, pager, next, jumper"
               :total="total">
             </el-pagination>
-            <!--<b-pagination align="right" :label-page="falg" :number-of-pages="num"  :total-rows="total" :per-page="perPage" v-model="page" prev-text="上一页"-->
-            <!--next-text="下一页"/>-->
           </nav>
         </b-card>
       </b-col>
@@ -99,83 +97,40 @@
   export default {
     data() {
       return {
-        modalShow: false,
-        CodeName: "",
-        pickerOptions: {},
-        name: "",
-        saleList: [],
         total: 0,
         perPage: 20,
         page: 1,
         tableData2: [],
-        num: 3,
-        falg: true
+        tabIndex: 1,
+        //加载圈
+        loading: true,
       };
     },
     methods: {
-      searchCard() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        let searchData = [];
-        if (this.CodeName) {
-          localData.map(item => {
-            if (
-              item.card_no.toString().indexOf(this.CodeName) > -1 ||
-              item.card_name.indexOf(this.CodeName) > -1
-            ) {
-              searchData.push(item);
-            }
-          });
-          if (!searchData.length) {
-            this.modalShow = true;
-            this.saleList = localData;
-          } else {
-            this.saleList = searchData;
-          }
-        } else {
-          this.saleList = localData;
-        }
+      loadSpiner() {
+        setTimeout(() => {
+          this.loading = false;
+        }, 2000);
       },
-      save() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        this.saleList = localData;
-        if (this.typeTitle === "编辑卡券") {
-          this.saleList[this.editIndex] = this.cardInfo;
-        } else {
-          this.saleList.unshift(this.cardInfo);
-        }
-        sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
-        this.showAdd = true;
+
+      //切换tab方法
+      tabChange(index) {
+        this.tabIndex = index;
+        this.loading = true;
+        this.loadSpiner();
+        //请求接口
+        this.search()
       },
-      back() {
-        this.showAdd = true;
+      search() {
+        //
       },
-      deleteRow(index, row) {
-        console.log(index)
+      goDetail(index) {
         this.$router.push({
           path: '/reflect-detail',
-          query:{id:index.$index}
+          query: {id: index.$index, tabIndex: this.tabIndex}
         })
       },
 
-      editCard(type, index) {
-        if (type === "edit") {
-          this.editIndex = index;
-          this.cardInfo = this.saleList[index];
-          this.typeTitle = "编辑卡券";
-        } else {
-          this.cardInfo = {
-            card_no: parseInt(new Date().getTime() / 1000),
-            card_name: "",
-            card_type: "",
-            start_time: "",
-            end_time: "",
-            status: "已提交"
-          };
-          this.editIndex = 0;
-          this.typeTitle = "新增卡券";
-        }
-        this.showAdd = false;
-      }
     },
     computed: {},
     mounted() {
@@ -187,10 +142,53 @@
           price: "￥2.3",
           count: 234,
           endTime: "2018-10-20 12:34",
-          startTime: "2018-09-20 12:34"
+          startTime: "2018-09-20 12:34",
+          status: i
         });
       }
       this.total = this.tableData2.length;
+      setTimeout(() => {
+        this.loading = false;
+      }, 2000);
+      this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
+        "mobile": "4634",
+        "pwd": "123456",
+        "verifyCode": "1234"
+
+      }).then(res => {
+        console.log(res)
+      }), err => {
+        console.error('失败', err)
+      }
+      this.$http.post(process.env.VUE_APP_HOST + '/accout/userTransDetail', {
+        "lastTransTime": 0,
+        //     "size": 10
+
+      }).then(res => {
+        console.log(res)
+      }), err => {
+        console.error('失败', err)
+      }
+
+      // request({
+      //   url: Modules.SYS_LOGIN,
+      //   params: {
+      //     mobile: "4634",
+      //     pwd: "123456",
+      //     verifyCode: "1234"
+      //   }
+      // }).then(res => {
+      //   console.log(res);
+      // });
+      // request({
+      //   url: Modules.SYS_CHANGE,
+      //   params:{
+      //     "lastTransTime": 0,
+      //     "size": 10
+      //   }
+      // }).then(res => {
+      //   console.log(res);
+      // });
     }
   };
 </script>

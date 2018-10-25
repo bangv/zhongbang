@@ -6,37 +6,7 @@
     <div class="app-body">
       <div class="content">
         <div class="detail-head">
-          <p class="list-title">申诉统计</p>
-          <div class="content-chart">
-            <div class="chart">
-              <el-progress type="circle" :percentage="80" :show-text="showTxt" :width="chartWidth"
-                           :stroke-width="chartBorder"
-                           color="#FF9364"></el-progress>
-            </div>
-            <div>
-              <p class="mg-bt">
-                <span class="point has"></span><span>已处理</span>
-              </p>
-              <p>
-                <span class="point"></span><span>待处理</span>
-              </p>
-            </div>
-            <div>
-              <p class="count-b">80</p>
-              <p class="content-b">已处理</p>
-            </div>
-            <div>
-              <p class="count-b">20</p>
-              <p class="content-b">待处理</p>
-            </div>
-            <div>
-              <p class="count-b">100</p>
-              <p class="content-b">总申诉数</p>
-            </div>
-          </div>
-        </div>
-        <div class="detail-head pd-100">
-          <p class="list-title">申诉详情</p>
+          <p class="list-title">任务审核详情</p>
           <div class="publisher-wrap">
             <span class="publisher">申诉人：</span>
             <div class="head-sculpture">
@@ -47,12 +17,7 @@
               <p class="id">ID：{{publisherID}}</p>
             </div>
           </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">单号：</span><span>8596</span></div>
-              <div><span class="detail-title">申诉时间：</span><span>2018-10-25:14:30</span></div>
-            </div>
-          </div>
+
           <div class="publisher-content">
             <div class="row">
               <div class="w-30"><span class="detail-title">被申诉人：</span><span>小卡拉<span
@@ -63,25 +28,72 @@
           <div class="publisher-content">
             <div class="row">
               <span class="detail-title">任务标题：</span><span>注册app免费拿红包</span>
+              <div><span class="detail-title">任务标题：</span><span>其他</span></div>
+            </div>
+          </div>
+
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">文字验证：</span><span>微信名+ID</span></div>
+              <div><span class="detail-title">任务截止时间：</span><span>2018-10-25:14:30</span></div>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">申诉原因：</span><span>上传的截图和完成任务步骤全按发布方要求，发布方却评定为任务不合格。</span>
+              <span class="detail-title">任务链接：</span><span>{{link}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row big">
+              <span class="detail-title">备注：</span><span>{{tip}}</span>
+            </div>
+          </div>
+          <div class="pic-content">
+            <div class="proving-pic">
+              <p class="pic-title">---验证图---</p>
+              <div class="pic-box">
+                <div class="pic01"></div>
+                <div class="pic02"></div>
+              </div>
+            </div>
+            <div class="proving-pic">
+              <p class="pic-title">---操作步骤---</p>
+              <div class="pic-box">
+                <div class="pic01"></div>
+                <div class="pic02"></div>
+              </div>
+            </div>
+            <div class="proving-pic">
+              <p class="pic-title">---驳回原因---</p>
+              <div class="pic-box">
+                未按要求上传验证图，详细任务截图请见操作步骤，验证图上传时间超过了任务截止时间。
+              </div>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn" @click="detail">查看详情</el-button>
-            <el-button class="btn btn-margin">已处理</el-button>
-            <el-button class="btn btn-margin">已完结</el-button>
-            <el-button class="btn btn-margin">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
       </div>
     </div>
+
+    <el-dialog
+      title="驳回"
+      :visible.sync="taskDialog"
+      width="400px"
+      :close-on-click-modal="noModal"
+      :close-on-press-escape="noESC"
+      :before-close="handleClose" class="dialog-title" center>
+      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
+      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
+      </textarea>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="taskDialog = false">取 消</el-button>
+    <el-button type="primary" @click="taskDialog = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,7 +101,6 @@
 
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
-
 
   export default {
     components: {
@@ -99,6 +110,11 @@
     },
     data() {
       return {
+        //只能通过关闭按钮关
+        noModal: false,
+        noESC: false,
+        //驳回弹框
+        taskDialog: false,
         //进度条
         showTxt: true,
         //进度条线宽度
@@ -108,21 +124,29 @@
         //类型的序列号
         tabIndex: 0,
         //加载圈
-        loading:'',
+        loading: '',
         total: 0,
         perPage: 20,
         page: 1,
         tableData2: [],
         publisherName: "微猫微视",
         publisherID: 557313,
+        title: "微信欲加好友解封帮助",
+        id: 652312,
+        type: "其他",
+        number: 3412,
+        price: 50,
+        equipment: "安卓",
+        createTime: "2018/08/21",
+        endTime: "2018/09/21",
+        text: "微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无效",
+        link: "https://www.baidu.com/",
+        tip: "接单前请仔细阅读以下操作步骤并满足所有条件，没满18岁的不要接单。不满足条件的，没诚心的，不愿意等的，不要接单。"
       };
     },
     methods: {
-      //详情
-      detail(){
-        this.$router.push({
-          path: '/apply-task-detail',
-        })
+      handleClose: function () {
+        this.taskDialog = false;
       },
       //返回
       back() {
@@ -131,18 +155,7 @@
     },
     computed: {},
     mounted() {
-      console.log("=====", this.$route.query.id);
-      console.log("=====", this.$route.query.tabIndex);
-      this.tabIndex = this.$route.query.tabIndex;
-      this.loading =  this.$loading({
-        lock: true,
-        text: '加载中',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.8)',
-      });
-      setTimeout(() => {
-        this.loading.close();
-      }, 2000);
+
     },
     destroyed: function () {
       this.loading.close();
@@ -152,6 +165,7 @@
 <style lang="scss" scoped>
   //列表和头部的公共样式
   .task-detail {
+
     .app-body {
       margin-top: 0;
     }
@@ -172,9 +186,6 @@
         border: 0;
         box-shadow: 2px 2px 10px #ccc;
         border-radius: 2px;
-        &.pd-100 {
-          padding-bottom: 100px;
-        }
       }
       .list-title {
         padding-left: 5px;
@@ -312,23 +323,21 @@
             justify-content: center;
             .pic01 {
               width: 420px;
-              height: 747px;
-              background: red;
+              height: 400px;
+              background: #ccc;
             }
             .pic02 {
               width: 420px;
-              height: 747px;
-              background: blue;
+              height: 400px;
+              background: #ccc;
               margin-left: 30px;
             }
           }
 
         }
-
       }
 
     }
 
   }
-
 </style>

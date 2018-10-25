@@ -105,19 +105,35 @@
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn">通过</el-button>
-            <el-button class="btn btn-margin">驳回</el-button>
+            <el-button class="btn" v-if="tabIndex==1&&tabIndex!=2">通过</el-button>
+            <el-button class="btn btn-margin" v-if="tabIndex==1&&tabIndex!=3" @click="rejectFtn">驳回</el-button>
             <el-button class="btn btn-margin">下一个</el-button>
-            <el-button class="btn btn-margin">返回</el-button>
+            <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
       </div>
-
     </div>
+
+    <el-dialog
+      title="驳回"
+      :visible.sync="taskDialog"
+      width="400px"
+      :close-on-click-modal="noModal"
+      :close-on-press-escape="noESC"
+      :before-close="handleClose" class="dialog-title" center>
+      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
+      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
+      </textarea>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="taskDialog = false">取 消</el-button>
+    <el-button type="primary" @click="taskDialog = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
 
@@ -129,23 +145,25 @@
     },
     data() {
       return {
+        //只能通过关闭按钮关
+        noModal: false,
+        noESC: false,
+        //驳回弹框
+        taskDialog:false,
         //进度条
         showTxt: true,
         //进度条线宽度
         chartBorder: 10,
         //进度宽度
         chartWidth: 100,
-        modalShow: false,
-        CodeName: "",
-        pickerOptions: {},
-        name: "",
-        saleList: [],
+        //类型的序列号
+        tabIndex: 0,
+        //加载圈
+        loading: '',
         total: 0,
         perPage: 20,
         page: 1,
         tableData2: [],
-        num: 3,
-        falg: true,
         publisherName: "微猫微视",
         publisherID: 557313,
         title: "微信欲加好友解封帮助",
@@ -162,115 +180,43 @@
       };
     },
     methods: {
+      handleClose: function () {
+        this.taskDialog = false;
+      },
       //返回
-      goback() {
+      back() {
         this.$router.go(-1);
       },
-      searchCard() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        let searchData = [];
-        if (this.CodeName) {
-          localData.map(item => {
-            if (
-              item.card_no.toString().indexOf(this.CodeName) > -1 ||
-              item.card_name.indexOf(this.CodeName) > -1
-            ) {
-              searchData.push(item);
-            }
-          });
-          if (!searchData.length) {
-            this.modalShow = true;
-            this.saleList = localData;
-          } else {
-            this.saleList = searchData;
-          }
-        } else {
-          this.saleList = localData;
-        }
+      //驳回
+      rejectFtn: function () {
+        this.taskDialog = true;
       },
-      save() {
-        let localData = JSON.parse(sessionStorage.getItem("cardLists"));
-        this.saleList = localData;
-        if (this.typeTitle === "编辑卡券") {
-          this.saleList[this.editIndex] = this.cardInfo;
-        } else {
-          this.saleList.unshift(this.cardInfo);
-        }
-        sessionStorage.setItem("cardLists", JSON.stringify(this.saleList));
-        this.showAdd = true;
-      },
-      back() {
-        this.showAdd = true;
-      },
-      // deleteRow(index, row) {
-      //   console.log(index);
-      // },
-
-      editCard(type, index) {
-        if (type === "edit") {
-          this.editIndex = index;
-          this.cardInfo = this.saleList[index];
-          this.typeTitle = "编辑卡券";
-        } else {
-          this.cardInfo = {
-            card_no: parseInt(new Date().getTime() / 1000),
-            card_name: "",
-            card_type: "",
-            start_time: "",
-            end_time: "",
-            status: "已提交"
-          };
-          this.editIndex = 0;
-          this.typeTitle = "新增卡券";
-        }
-        this.showAdd = false;
-      }
     },
     computed: {},
     mounted() {
       console.log("=====", this.$route.query.id);
-      for (let i = 0; i < 200; i++) {
-        this.tableData2.push({
-          name: "2016-05-02",
-          type: "注册",
-          title: "微信邀请好友",
-          price: "￥2.3",
-          count: 234,
-          endTime: "2018-10-20 12:34",
-          startTime: "2018-09-20 12:34"
-        });
-      }
-      this.total = this.tableData2.length;
-      this.$http
-        .post(process.env.VUE_APP_HOST + "/user/login", {
-          mobile: "4634",
-          pwd: "123456",
-          verifyCode: "1234"
-        })
-        .then(res => {
-          this.$message("登录成功");
-          console.log(res);
-        }),
-        err => {
-          console.error("失败", err);
-        };
-      this.$http
-        .post(process.env.VUE_APP_HOST + "/accout/userTransDetail", {
-          lastTransTime: 0
-          //     "size": 10
-        })
-        .then(res => {
-          console.log(res);
-        }),
-        err => {
-          console.error("失败", err);
-        };
+      console.log("=====", this.$route.query.tabIndex);
+      this.tabIndex = this.$route.query.tabIndex;
+      // this.loading = this.$loading({
+      //   lock: true,
+      //   text: '加载中',
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.8)',
+      // });
+      // setTimeout(() => {
+      //   this.loading.close();
+      // }, 2000);
+
+    },
+    destroyed: function () {
+      this.loading.close();
     }
   };
 </script>
 <style lang="scss" scoped>
   //列表和头部的公共样式
   .task-detail {
+
     .app-body {
       margin-top: 0;
     }
@@ -428,13 +374,13 @@
             justify-content: center;
             .pic01 {
               width: 420px;
-              height: 747px;
-              background: red;
+              height: 400px;
+              background: #ccc;
             }
             .pic02 {
               width: 420px;
-              height: 747px;
-              background: blue;
+              height: 400px;
+              background: #ccc;
               margin-left: 30px;
             }
           }

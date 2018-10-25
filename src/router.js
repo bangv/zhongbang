@@ -9,7 +9,8 @@ import TaskDetail from "./views/task-detail";
 import reflectDetail from "./views/reflect-detail";
 import applyDetail from "./views/apply-detail";
 import PageLogin from "./views/PageLogin";
-import Forget from "./views/forget";
+import Forget from "./views/forget";applyTaskDetail
+import applyTaskDetail from "./views/apply-task-detail";
 
 Vue.use(Router);
 
@@ -34,6 +35,12 @@ let router = new Router({
       path: "/task-detail",
       name: "TaskDetail",
       component: TaskDetail
+    },
+
+    {
+      path: "/apply-task-detail",
+      name: "applyTaskDetail",
+      component: applyTaskDetail
     },
     {
       path: "/reflect-detail",
