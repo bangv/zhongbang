@@ -40,30 +40,32 @@
                 prop="name"
                 label="申请人">
                 <template slot-scope="scope">
-                  <img class="user-logo" src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" width="38" height="38" />
+                  <img class="user-logo"
+                       src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132"
+                       width="38" height="38"/>
                   <span class="user-name">{{scope.row.name}}</span>
                 </template>
               </el-table-column>
               <el-table-column
                 prop="order"
                 label="单号">
-              </el-table-column>
-              <el-table-column
-                prop="title"
-                label="提现分类"
-                width="180">
                 <template slot-scope="scope">
                   <el-button
                     @click.native.prevent="goDetail(scope)"
                     type="text"
                     size="small">
-                    {{scope.row.title}}
+                    {{scope.row.order}}
                   </el-button>
                 </template>
               </el-table-column>
               <el-table-column
+                prop="title"
+                label="提现分类"
+                width="180">
+              </el-table-column>
+              <el-table-column
                 prop="price"
-                label="价格">
+                label="金额">
               </el-table-column>
               <el-table-column
                 prop="startTime"
@@ -133,8 +135,8 @@
     mounted() {
       for (let i = 0; i < 200; i++) {
         this.tableData2.push({
-          name: "微微笑"+i+1,
-          order:"254862",
+          name: "微微笑" + i + 1,
+          order: "254862",
           title: "微信邀请好友",
           price: "￥2.3",
           startTime: "2018-09-20 12:34",
@@ -238,10 +240,10 @@
         margin-right: 15px;
       }
     }
-    .user-logo{
+    .user-logo {
       border-radius: 50%;
     }
-    .user-name{
+    .user-name {
       display: inline-block;
       padding-left: 5px;
     }
