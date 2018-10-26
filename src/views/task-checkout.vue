@@ -29,10 +29,14 @@
               :data="tableData2"
               style="width: 100%"
               max-height="700"
-              v-loading="loading">
+              v-loading="loading" class="data-list">
               <el-table-column
                 prop="name"
                 label="发布人">
+                <template slot-scope="scope">
+                  <img class="user-logo" src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" width="38" height="38" />
+                  <span class="user-name">{{scope.row.name}}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="type"
@@ -131,7 +135,7 @@
     mounted() {
       for (let i = 0; i < 200; i++) {
         this.tableData2.push({
-          name: "2016-05-02",
+          name: "微微一笑"+i,
           type: "注册",
           title: "微信邀请好友",
           price: "￥2.3",
@@ -145,21 +149,9 @@
         this.loading = false;
       }, 2000);
       this.total = this.tableData2.length;
-      this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
-        "mobile": "4634",
-        "pwd": "123456",
-        "verifyCode": "1234"
-
-      }).then(res => {
-        this.$message("登录成功");
-        // this.loading = false;
-        console.log(res)
-      }), err => {
-        console.error('失败', err)
-      }
       this.$http.post(process.env.VUE_APP_HOST + '/accout/userTransDetail', {
         "lastTransTime": 0,
-        //     "size": 10
+        "size": 10
 
       }).then(res => {
         console.log(res)
@@ -234,6 +226,13 @@
         padding-bottom: 15px;
         margin-right: 15px;
       }
+    }
+    .user-logo{
+      border-radius: 50%;
+    }
+    .user-name{
+      display: inline-block;
+      padding-left: 5px;
     }
     .el-table th {
       border-bottom: 1px solid #e9e9e9 !important;

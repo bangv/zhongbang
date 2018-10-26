@@ -29,14 +29,18 @@
             <el-table
               :data="tableData2"
               style="width: 100%"
-              max-height="700"  v-loading="loading">
+              max-height="700" v-loading="loading">
               <el-table-column
                 prop="name"
-                label="发布人">
+                label="申诉人">
+                <template slot-scope="scope">
+                  <img class="user-logo" src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" width="38" height="38" />
+                  <span class="user-name">{{scope.row.name}}</span>
+                </template>
               </el-table-column>
               <el-table-column
-                prop="type"
-                label="任务类型">
+                prop="order"
+                label="单号">
               </el-table-column>
               <el-table-column
                 prop="title"
@@ -52,20 +56,16 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="price"
-                label="价格">
+                prop="complainant"
+                label="被申诉人">
               </el-table-column>
               <el-table-column
-                prop="count"
-                label="数量">
-              </el-table-column>
-              <el-table-column
-                prop="endTime"
-                label="截止时间">
+                prop="taskID"
+                label="任务ID">
               </el-table-column>
               <el-table-column
                 prop="startTime"
-                label="创建时间">
+                label="申诉时间">
               </el-table-column>
             </el-table>
           </div>
@@ -78,8 +78,6 @@
               layout="prev, pager, next, jumper"
               :total="total">
             </el-pagination>
-            <!--<b-pagination align="right" :label-page="falg" :number-of-pages="num"  :total-rows="total" :per-page="perPage" v-model="page" prev-text="上一页"-->
-            <!--next-text="下一页"/>-->
           </nav>
         </b-card>
       </b-col>
@@ -99,7 +97,7 @@
         tableData2: [],
         tabIndex: 1,
         //加载圈
-        loading:true,
+        loading: true,
       };
     },
     methods: {
@@ -132,12 +130,11 @@
     mounted() {
       for (let i = 0; i < 200; i++) {
         this.tableData2.push({
-          name: "2016-05-02",
-          type: "注册",
+          name: "张三" + i + 1,
+          order: "233",
           title: "微信邀请好友",
-          price: "￥2.3",
-          count: 234,
-          endTime: "2018-10-20 12:34",
+          complainant:"李四",
+          taskID:"2"+i+2,
           startTime: "2018-09-20 12:34",
           status: i
         });
@@ -234,6 +231,13 @@
         padding-bottom: 15px;
         margin-right: 15px;
       }
+    }
+    .user-logo{
+      border-radius: 50%;
+    }
+    .user-name{
+      display: inline-block;
+      padding-left: 5px;
     }
     .el-table th {
       border-bottom: 1px solid #e9e9e9 !important;

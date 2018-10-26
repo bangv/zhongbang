@@ -10,7 +10,7 @@
           <img src="../assets/logout-bg.png" title="安全退出"/>
         </span>
       <span class="logout">
-          <img src="../assets/logout-bg.png" title="头像"/>
+          <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
         </span>
       <span>{{user}} </span>
     </div>
@@ -85,7 +85,7 @@ export default {
     padding-right: 18px;
     & > span {
       font-size: 14px;
-      margin-right: 8px;
+      margin-right: 10px;
     }
     .logout {
       text-align: center;
@@ -97,6 +97,7 @@ export default {
       img {
         width: 100%;
         height: 100%;
+        border-radius: 50%;
       }
     }
   }

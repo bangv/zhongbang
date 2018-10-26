@@ -40,7 +40,7 @@
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
-              <img src="../assets/logout-bg.png"/>
+              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
             </div>
             <div class="publisher-tip">
               <p class="name">{{publisherName}}</p>
@@ -209,7 +209,7 @@
 
     },
     destroyed: function () {
-      this.loading.close();
+      // this.loading.close();
     }
   };
 </script>
@@ -313,11 +313,12 @@
           }
           .head-sculpture {
             width: 44px;
-            height: 40px;
+            height: 44px;
             vertical-align: middle;
             img {
               width: 100%;
               height: 100%;
+              border-radius: 50%;
             }
           }
           .publisher-tip {

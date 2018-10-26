@@ -40,7 +40,7 @@
           <div class="publisher-wrap">
             <span class="publisher">申请人：</span>
             <div class="head-sculpture">
-              <img src="../assets/logout-bg.png"/>
+              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
             </div>
             <div class="publisher-tip">
               <p class="name">{{publisherName}}</p>
@@ -188,18 +188,18 @@
       console.log("=====", this.$route.query.id);
       console.log("=====", this.$route.query.tabIndex);
       this.tabIndex = this.$route.query.tabIndex;
-      this.loading = this.$loading({
-        lock: true,
-        text: '加载中',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.8)',
-      });
-      setTimeout(() => {
-        this.loading.close();
-      }, 2000);
+      // this.loading = this.$loading({
+      //   lock: true,
+      //   text: '加载中',
+      //   spinner: 'el-icon-loading',
+      //   background: 'rgba(0, 0, 0, 0.8)',
+      // });
+      // setTimeout(() => {
+      //   this.loading.close();
+      // }, 2000);
     },
     destroyed: function () {
-      this.loading.close();
+      // this.loading.close();
     }
   };
 </script>
@@ -305,11 +305,12 @@
           }
           .head-sculpture {
             width: 44px;
-            height: 40px;
+            height: 44px;
             vertical-align: middle;
             img {
               width: 100%;
               height: 100%;
+              border-radius: 50%;
             }
           }
           .publisher-tip {

@@ -32,8 +32,8 @@
           <el-form-item style="width:100%;margin-top: 10px;" label-width="0">
             <el-button style="width:100%;" class="load-btn"
                        :class="{'valid-btn': ruleForm2.account,'':!ruleForm2.account }"
-                       @click.native.prevent="dologoin">
-              登录
+                       @click.native.prevent="dologoin" v-bind:disabled="isLogin">
+              <i class="el-icon-loading" v-if="isLogin"></i>{{loginStatus}}
             </el-button>
           </el-form-item>
         </el-form>
@@ -66,10 +66,12 @@
         passType: 'password',
         passShow: true,
         passHide: true,
-        logining: false,
+        loading: false,
         accountLength: 11,
         passwordLength: 6,
-        storeId: '',
+        loginStatus: '登录',
+        //点击登录按钮禁用
+        isLogin: false,
         ruleForm2: {
           account: '',
           checkPass: ''
@@ -110,18 +112,28 @@
       },
       // 登录
       dologoin(ev) {
-
-        this.$router.push({path: '/home'});
         if (!this.ruleForm2.account) return;
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            this.logining = true;
-            alert(33);
+            this.isLogin = true;
+            this.loginStatus = '登录中...';
+            this.$router.push({path: '/home'});
             let password = SHA1(this.ruleForm2.checkPass).toString();
-            console.log(password)
+            this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
+              "mobile": "4634",
+              "pwd": "123456",
+              "verifyCode": "1234"
+
+            }).then(res => {
+              this.isLogin = false;
+              this.$message("登录成功");
+              console.log("登录成功======", res);
+            }), err => {
+              console.error('登录失败======', err)
+              this.isLogin = false;
+            }
             // sessionStorage.setItem('store_id', this.storeId)
           } else {
-            this.logining = false;
             return false
           }
         })
@@ -161,9 +173,9 @@
       width: 800px;
       height: 530px;
       position: fixed;
-      top:50%;
-      left:50%;
-      margin-left:-400px;
+      top: 50%;
+      left: 50%;
+      margin-left: -400px;
       margin-top: -265px;
 
     }
@@ -299,10 +311,18 @@
         outline: 0;
         height: 50px;
         margin: 10px 0;
+        cursor: not-allowed;
       }
       .valid-btn {
         background: #FF4343;
         color: #fff;
+        cursor: pointer;
+      }
+      .el-form-item__content .el-button.is-disabled:hover {
+        color: #fff;
+        cursor: not-allowed;
+        background-image: none;
+        background: #FF4343;;
       }
       .demo-input-suffix {
         margin-top: 20px;
