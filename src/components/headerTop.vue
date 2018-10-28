@@ -10,14 +10,16 @@
           <img src="../assets/logout-bg.png" title="安全退出"/>
         </span>
       <span class="logout">
-          <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
+          <img :src="userInfo.ico" title="头像"/>
         </span>
-      <span>{{user}} </span>
+      <span>{{userInfo.displayName}} </span>
     </div>
   </div>
 </template>
 
 <script>
+  import sessionManagement from "../utils/SessionManagement";
+  import axios from "axios";
 export default {
   name: "headerTop",
   props: {
@@ -25,14 +27,27 @@ export default {
   },
   data: function() {
     return {
-      user: "张三11"
+      userInfo: {},
+
     };
   },
   methods: {
     //退出
     logout() {
-      this.$router.push({ path: "/login" });
+      axios.get(process.env.VUE_APP_HOST + "/user/logout", {})
+        .then(res => {
+          if (res.data.code === 200) {
+            this.$message("退出成功");
+            this.$router.push({path: "/login"});
+          }
+        }),
+        err => {
+          this.$message("服务器故障，退出失败！");
+        };
     }
+  },
+  mounted() {
+    this.userInfo = JSON.parse(sessionManagement.getUserInfo());
   }
 };
 </script>

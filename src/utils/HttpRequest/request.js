@@ -1,4 +1,41 @@
-// import axios from 'axios';
+import axios from "axios";
+import router from "../../router";
+import sessionManagement from "../SessionManagement";
+import Vue from 'vue'
+
+// axios.interceptors.request.use(
+//   config => {
+//     if (!sessionManagement.getUserInfo()) {
+//       sessionStorage.clear();
+//       router.replace({
+//         path: "/loin"
+//       });
+//     }
+//     return config;
+//   },
+//   err => {
+//     return Promise.reject(err);
+//   }
+// );
+axios.interceptors.response.use(
+  function (response) {
+    if (response.data.code !== 200) {
+      if (response.data.code === 400) {
+        sessionStorage.clear();
+        router.replace({
+          path: "/login"
+        });
+      } else {
+        response.data.msg && Vue.prototype.$message(response.data.msg);
+      }
+    }
+    return response;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
+
 //
 // const ZHONGBANG = 'zhongbang'
 //

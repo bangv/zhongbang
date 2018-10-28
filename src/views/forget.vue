@@ -50,6 +50,9 @@
 </template>
 <script>
   // import { SHA1, SHA256 } from 'crypto-js'
+
+  import axios from "axios";
+
   export default {
     data() {
       // 手机号验证
@@ -160,12 +163,22 @@
               this.isActive = true
             }
           }
-        }, 1000)
-        this.$message({
-          message: '验证码已发送，请注意查收',
-          type: 'success'
-        })
-
+        }, 1000);
+        this.sendValidCode();
+      },
+      //发送验证码api
+      sendValidCode() {
+        axios.post(process.env.VUE_APP_HOST + "/sys/sms/send", {"mobile": this.forgetForm.phone}).then(res => {
+          if (res.data.code === 200) {
+            this.$message({
+              message: '验证码已发送，请注意查收',
+              type: 'success'
+            })
+          }
+        }),
+          err => {
+            this.$message("服务器故障，登录失败！");
+          };
       },
       // 输入密码时控制眼睛睁闭
       showIcon() {
@@ -204,8 +217,21 @@
         }
       },
       // 重置密码
-      resetPass(ev) {
-
+      resetPass() {
+        axios.post(process.env.VUE_APP_HOST + "/user/updatePwd", {
+          "mobile": this.forgetForm.phone,
+          "newPwd": this.forgetForm.pass,
+          "pwd": "",
+          "verifyCode": this.forgetForm.testPass
+        }).then(res => {
+          if (res.data.code === 200) {
+            this.$message("密码重置成功，请重新登录");
+            this.$router.push({path: "/login"});
+          }
+        }),
+          err => {
+            this.$message("服务器故障，登录失败！");
+          };
       }
     }
   }
@@ -270,7 +296,7 @@
       border-radius: 5px;
       -moz-border-radius: 5px;
       background-clip: padding-box;
-      position: fixed;
+      position: absolute;
       top: 0px;
       bottom: 0;
       left: 0;
@@ -280,7 +306,7 @@
       width: 430px;
       padding: 35px;
       background: #fff;
-      margin: 140px auto;
+      margin: 40px auto;
       .el-input__suffix-inner {
         margin-right: 10px !important;
         .icon-hide {

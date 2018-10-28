@@ -12,12 +12,12 @@
         <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="0" class="demo-ruleForm">
           <!--<h2 class="logo">系统登录</h2>-->
           <el-form-item prop="account">
-            <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="手机号" clearable
+            <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="用户名" clearable
                       :maxlength='accountLength'></el-input>
           </el-form-item>
           <el-form-item prop="checkPass">
             <el-input :type="passType" v-model.trim="ruleForm2.checkPass" auto-complete="off" placeholder="密码"
-                      :maxlength='passwordLength' :input="showIcon()" @keyup.enter.native="dologoin"><i slot="suffix"
+                      :maxlength='passwordLength' :input="showIcon()" @keyup.enter.native="doLogoin"><i slot="suffix"
                                                                                                         class="el-input__icon"
                                                                                                         :class="{'icon-show': passShow,'icon-hide':passHide }"
                                                                                                         @click.self="showPass(passType)"></i>
@@ -32,7 +32,7 @@
           <el-form-item style="width:100%;margin-top: 10px;" label-width="0">
             <el-button style="width:100%;" class="load-btn"
                        :class="{'valid-btn': ruleForm2.account,'':!ruleForm2.account }"
-                       @click.native.prevent="dologoin" v-bind:disabled="isLogin">
+                       @click.native.prevent="doLogoin" v-bind:disabled="isLogin">
               <i class="el-icon-loading" v-if="isLogin"></i>{{loginStatus}}
             </el-button>
           </el-form-item>
@@ -45,52 +45,64 @@
 </template>
 
 <script>
-
-  import {SHA1} from 'crypto-js'
-  import {sha256} from 'crypto-js/sha256'
+  import {SHA1} from "crypto-js";
+  import {sha256} from "crypto-js/sha256";
+  import axios from "axios";
+  import sessionManagement from "../utils/SessionManagement";
 
   export default {
     data() {
       //      手机号验证
       var validatePhone = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('账号不能为空，请重新输入'))
+        if (value === "") {
+          callback(new Error("账号不能为空，请重新输入"));
         } else {
-          if (!(/^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,3,5,6,7,8]))\d{8}$/.test(value))) {
-            callback(new Error('账号格式错误'))
+          if (
+            !/^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,3,5,6,7,8]))\d{8}$/.test(value)
+          ) {
+            callback(new Error("账号格式错误"));
           }
         }
-        callback()
-      }
+        callback();
+      };
       return {
-        passType: 'password',
+        passType: "password",
         passShow: true,
         passHide: true,
         loading: false,
         accountLength: 11,
         passwordLength: 6,
-        loginStatus: '登录',
+        loginStatus: "登录",
         //点击登录按钮禁用
         isLogin: false,
         ruleForm2: {
-          account: '',
-          checkPass: ''
+          account: "4634",
+          checkPass: "123456"
         },
         rules2: {
           account: [
-            {required: true, validator: validatePhone, trigger: 'blur'}
+            // { required: true, validator: validatePhone, trigger: "blur" }
+            {
+              required: true,
+              message: "用户名不能为空，请重新输入",
+              trigger: "blur"
+            }
           ],
           checkPass: [
-            {required: true, message: '密码不能为空，请重新输入', trigger: 'blur'}
+            {
+              required: true,
+              message: "密码不能为空，请重新输入",
+              trigger: "blur"
+            }
           ]
         }
-      }
+      };
     },
     methods: {
       // 输入密码时控制眼睛睁闭
       showIcon() {
-        if (this.ruleForm2.checkPass !== '') {
-          this.passHide = true
+        if (this.ruleForm2.checkPass !== "") {
+          this.passHide = true;
         } else {
           this.passHide = false;
           this.passShow = false;
@@ -98,64 +110,59 @@
       },
       // 控制输入的密码是否为明文
       showPass(pass) {
-        if (pass === 'password') {
-          this.passType = 'text'
-          this.passShow = true
+        if (pass === "password") {
+          this.passType = "text";
+          this.passShow = true;
         } else {
-          this.passType = 'password'
-          this.passShow = false
+          this.passType = "password";
+          this.passShow = false;
         }
       },
       // 忘记密码
       forget() {
-        this.$router.push({path: '/forget'});
+        this.$router.push({path: "/forget"});
       },
       // 登录
-      dologoin(ev) {
+      doLogoin() {
         if (!this.ruleForm2.account) return;
-        this.$refs.ruleForm2.validate((valid) => {
+        this.$refs.ruleForm2.validate(valid => {
           if (valid) {
             this.isLogin = true;
-            this.loginStatus = '登录中...';
-            this.$router.push({path: '/home'});
-            let password = SHA1(this.ruleForm2.checkPass).toString();
-            this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
-              "mobile": "4634",
-              "pwd": "123456",
-              "verifyCode": "1234"
-
-            }).then(res => {
-              this.isLogin = false;
-              this.$message("登录成功");
-              console.log("登录成功======", res);
-            }), err => {
-              console.error('登录失败======', err)
-              this.isLogin = false;
-            }
-            // sessionStorage.setItem('store_id', this.storeId)
+            this.loginStatus = "登录中▪▪▪";
+            axios.post(process.env.VUE_APP_HOST + "/user/login", {
+                mobile: this.ruleForm2.account,
+                pwd: this.ruleForm2.checkPass,
+                verifyCode: ""
+              })
+              .then(res => {
+                this.loginStatus = "登录";
+                this.isLogin = false;
+                if (res.data.code === 200) {
+                  this.$message("登录成功");
+                  let userInfo = JSON.stringify(res.data.data);
+                  sessionManagement.setUserInfo(userInfo);
+                  this.$router.push({path: "/home"});
+                }
+              }),
+              err => {
+                this.loginStatus = "登录";
+                this.$message("服务器故障，登录失败！");
+                this.isLogin = false;
+              };
           } else {
-            return false
+            return false;
           }
-        })
-      },
-
+        });
+      }
     },
     mounted() {
-      this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
-        "mobile": "4634",
-        "pwd": "123456",
-        "verifyCode": "1234"
-
-      }).then(res => {
-        console.log(res)
-      }), err => {
-        console.error('失败', err)
-      }
+      sessionStorage.clear();
     }
-  }
+  };
 </script>
 <style lang="scss">
-  ::-ms-clear, ::-ms-reveal {
+  ::-ms-clear,
+  ::-ms-reveal {
     display: none;
   }
 
@@ -177,7 +184,6 @@
       left: 50%;
       margin-left: -400px;
       margin-top: -265px;
-
     }
     .login_content {
       width: 1210px;
@@ -223,7 +229,6 @@
       background: #f5f5f5 url(../assets/login-bg.jpg) no-repeat center;
     }
     .logo_bg {
-
       width: 400px;
       height: 530px;
       position: absolute;
@@ -305,7 +310,7 @@
         font-weight: 600;
       }
       .load-btn {
-        background: #F4F4F4;
+        background: #f4f4f4;
         color: #bbb;
         border: 0;
         outline: 0;
@@ -314,7 +319,7 @@
         cursor: not-allowed;
       }
       .valid-btn {
-        background: #FF4343;
+        background: #ff4343;
         color: #fff;
         cursor: pointer;
       }
@@ -322,12 +327,12 @@
         color: #fff;
         cursor: not-allowed;
         background-image: none;
-        background: #FF4343;;
+        background: #ff4343;
       }
       .demo-input-suffix {
         margin-top: 20px;
         text-align: right;
-        color: #BBBBBB;
+        color: #bbbbbb;
         .forget-pw {
           display: inline-block;
           cursor: pointer;
@@ -344,5 +349,4 @@
       }
     }
   }
-
 </style>

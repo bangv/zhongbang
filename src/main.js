@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import 'babel-polyfill'
 import router from './router'
 import store from './store'
 import BootstrapVue from 'bootstrap-vue'
@@ -13,13 +14,13 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './global.css'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
-import 'babel-polyfill'
+import './utils/HttpRequest/request'
 
 Vue.use(BootstrapVue);
 Vue.use(ElementUI);
-Vue.use(VueAxios, axios)
+Vue.prototype.axios = axios;
 Vue.config.productionTip = false;
+
 
 new Vue({
   router,

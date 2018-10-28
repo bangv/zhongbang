@@ -9,7 +9,9 @@ import TaskDetail from "./views/task-detail";
 import reflectDetail from "./views/reflect-detail";
 import applyDetail from "./views/apply-detail";
 import PageLogin from "./views/PageLogin";
-import Forget from "./views/forget";applyTaskDetail
+import Forget from "./views/forget";
+
+applyTaskDetail;
 import applyTaskDetail from "./views/apply-task-detail";
 
 Vue.use(Router);
@@ -17,9 +19,9 @@ Vue.use(Router);
 let router = new Router({
   routes: [
     {
-      path:'/',
-      name: '',
-      component: PageLogin,
+      path: "/",
+      name: "",
+      component: PageLogin
     },
     {
       path: "/login",
@@ -80,8 +82,7 @@ let router = new Router({
 //全局路由守卫
 router.beforeEach((to, from, next) => {
   // 如果session没有用户信息，且路由目标不是登录页，则跳转至登录页
-  if (sessionManagement.getUserInfo() && to["name"] !== "Login") {
-    console.log(to["name"] )
+  if (!sessionManagement.getUserInfo() && to["name"] !== "Login") {
     next({ name: "Login" });
   }
   next();

@@ -4,18 +4,18 @@
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
-          <li @click="tabChange(1)">
+          <li @click="tabChange(1,0)">
             <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待审核</span>
           </li>
-          <li @click="tabChange(2)">
+          <li @click="tabChange(2,1)">
             <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已审核</span>
           </li>
 
-          <li @click="tabChange(3)">
+          <li @click="tabChange(3,2)">
             <span :class="{'active':tabIndex==3,'':tabIndex!=3}">驳回</span>
           </li>
 
-          <li @click="tabChange(4)">
+          <li @click="tabChange(4,'')">
             <span class="last-bd" :class="{'active':tabIndex==4,'':tabIndex!=4}">全部</span>
           </li>
         </ul>
@@ -26,24 +26,30 @@
         <b-card class="text-center sale-table">
           <div class="table-box">
             <el-table
-              :data="tableData2"
+              :data="taskLists"
               style="width: 100%"
               max-height="700"
               v-loading="loading" class="data-list">
               <el-table-column
-                prop="name"
+                prop="alias"
                 label="发布人">
                 <template slot-scope="scope">
-                  <img class="user-logo" src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" width="38" height="38" />
-                  <span class="user-name">{{scope.row.name}}</span>
+                  <div class="use-bg">
+                    <div>
+                      <img class="user-logo" :src="scope.row.userIco" v-if="scope.row.userIco" width="38" height="38"/>
+                    </div>
+                    <div class="use-name">
+                      <span class="user-name">{{scope.row.alias}}</span>
+                    </div>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="type"
+                prop="typeName"
                 label="任务类型">
               </el-table-column>
               <el-table-column
-                prop="title"
+                prop="taskTitle"
                 label="任务标题"
                 width="180">
                 <template slot-scope="scope">
@@ -51,25 +57,31 @@
                     @click.native.prevent="goDetail(scope)"
                     type="text"
                     size="small">
-                    {{scope.row.title}}
+                    {{scope.row.taskTitle}}
                   </el-button>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="price"
+                prop="amount"
                 label="价格">
               </el-table-column>
               <el-table-column
-                prop="count"
+                prop="taskCount"
                 label="数量">
               </el-table-column>
               <el-table-column
-                prop="endTime"
+                prop="lastTime"
                 label="截止时间">
+                <template slot-scope="scope">
+                  <span class="user-name">{{getDateTime(scope.row['lastTime'])}}</span>
+                </template>
               </el-table-column>
               <el-table-column
-                prop="startTime"
+                prop="createTime"
                 label="创建时间">
+                <template slot-scope="scope">
+                  <span class="user-name">{{getDateTime(scope.row['createTime'])}}</span>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -78,7 +90,8 @@
               总共<span class="txt-rd">{{total}}</span>个任务
             </div>
             <el-pagination
-              :page-size="20"
+              @current-change="handleCurrentChange"
+              :page-size="10"
               layout="prev, pager, next, jumper"
               :total="total">
             </el-pagination>
@@ -91,37 +104,48 @@
 
 <script>
 
+  import axios from "axios";
+
   export default {
     data() {
       return {
         total: 0,
-        perPage: 20,
+        perPage: 10,
         page: 1,
-        tableData2: [],
+        taskLists: [],
         tabIndex: 1,
+        taskType: 0,
         //加载圈
         loading: true,
 
       };
     },
     methods: {
-      loadSpiner() {
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+      //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        let date = new Date(data);
+        let Y = date.getFullYear() + '-';
+        let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        let D = date.getDate() + ' ';
+        let h = date.getHours() + ':';
+        let m = date.getMinutes() + ':';
+        let s = date.getSeconds();
+        return Y + M + D + h + m + s;
       },
-
+      handleCurrentChange(val) {
+        this.page = val;
+        this.loading = true;
+        this.callBackApi(this.page);
+      },
       //切换tab方法
-      tabChange(index) {
+      tabChange(index, type) {
         if (this.tabIndex === index) return;
         this.tabIndex = index;
+        this.taskType = type
         this.loading = true;
-        this.loadSpiner();
         //请求接口
-        this.search()
-      },
-      search() {
-        //
+        this.page = 1;
+        this.callBackApi(this.page);
       },
       goDetail(index) {
         this.$router.push({
@@ -129,55 +153,31 @@
           query: {id: index.$index, tabIndex: this.tabIndex}
         })
       },
-
+      callBackApi(page) {
+        axios.post(process.env.VUE_APP_HOST + "/task/back/query", {
+          "examineStatus": this.taskType,
+          "nextId": 0,
+          "page": page,
+          "pageSize": this.pageSize,
+          "preId": 0
+        }).then(res => {
+          this.loading = false;
+          if (res.data.code === 200) {
+            let data = res.data.data;
+            this.total = data.total;
+            this.taskLists = data.records;
+            console.log('this.taskLists', data.records)
+          }
+        }),
+          err => {
+            this.loading = false;
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
     },
     computed: {},
-    mounted() {
-      for (let i = 0; i < 200; i++) {
-        this.tableData2.push({
-          name: "微微一笑"+i,
-          type: "注册",
-          title: "微信邀请好友",
-          price: "￥2.3",
-          count: 234,
-          endTime: "2018-10-20 12:34",
-          startTime: "2018-09-20 12:34",
-          status: i
-        });
-      }
-      setTimeout(() => {
-        this.loading = false;
-      }, 2000);
-      this.total = this.tableData2.length;
-      this.$http.post(process.env.VUE_APP_HOST + '/accout/userTransDetail', {
-        "lastTransTime": 0,
-        "size": 10
-
-      }).then(res => {
-        console.log(res)
-      }), err => {
-        console.error('失败', err)
-      }
-
-      // request({
-      //   url: Modules.SYS_LOGIN,
-      //   params: {
-      //     mobile: "4634",
-      //     pwd: "123456",
-      //     verifyCode: "1234"
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      // });
-      // request({
-      //   url: Modules.SYS_CHANGE,
-      //   params:{
-      //     "lastTransTime": 0,
-      //     "size": 10
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      // });
+    beforeMount() {
+      this.callBackApi(this.page);
     }
   };
 </script>
@@ -227,10 +227,22 @@
         margin-right: 15px;
       }
     }
-    .user-logo{
+    .use-bg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      div {
+        flex: 1;
+        text-align: right;
+        &.use-name {
+          text-align: left;
+        }
+      }
+    }
+    .user-logo {
       border-radius: 50%;
     }
-    .user-name{
+    .user-name {
       display: inline-block;
       padding-left: 5px;
     }
