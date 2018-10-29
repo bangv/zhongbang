@@ -25,6 +25,7 @@ axios.interceptors.response.use(
         router.replace({
           path: "/login"
         });
+        Vue.prototype.$message(response.data.msg);
       } else {
         response.data.msg && Vue.prototype.$message(response.data.msg);
       }

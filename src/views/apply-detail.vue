@@ -132,8 +132,6 @@
     computed: {},
     mounted() {
       console.log("=====", this.$route.query.id);
-      console.log("=====", this.$route.query.tabIndex);
-      this.tabIndex = this.$route.query.tabIndex;
       // this.loading =  this.$loading({
       //   lock: true,
       //   text: '加载中',

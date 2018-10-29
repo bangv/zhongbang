@@ -40,52 +40,54 @@
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
-              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
+              <img
+                src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132"
+                title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{publisherName}}</p>
-              <p class="id">ID：{{publisherID}}</p>
+              <p class="name">{{detailData.name}}</p>
+              <p class="id">ID：{{detailData.name}}</p>
             </div>
           </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">标题：</span><span>{{title}}</span></div>
-              <div><span class="detail-title">编号：</span><span>{{id}}</span></div>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">类型：</span><span>{{type}}</span></div>
-              <span class="detail-title">数量：</span><span>{{number}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">单价：</span><span>{{price}}元</span></div>
-              <span class="detail-title">支持设备：</span><span class="col02">{{equipment}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">任务创建时间：</span><span>{{createTime}}</span></div>
-              <span class="detail-title">任务截止时间：</span><span>{{endTime}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <span class="detail-title">文字验证：</span><span>{{text}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <span class="detail-title">任务链接：</span><span>{{link}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row big">
-              <span class="detail-title">备注：</span><span>{{tip}}</span>
-            </div>
-          </div>
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<div class="w-30"><span class="detail-title">标题：</span><span>{{title}}</span></div>-->
+          <!--<div><span class="detail-title">编号：</span><span>{{id}}</span></div>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<div class="w-30"><span class="detail-title">类型：</span><span>{{type}}</span></div>-->
+          <!--<span class="detail-title">数量：</span><span>{{number}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<div class="w-30"><span class="detail-title">单价：</span><span>{{price}}元</span></div>-->
+          <!--<span class="detail-title">支持设备：</span><span class="col02">{{equipment}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<div class="w-30"><span class="detail-title">任务创建时间：</span><span>{{createTime}}</span></div>-->
+          <!--<span class="detail-title">任务截止时间：</span><span>{{endTime}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<span class="detail-title">文字验证：</span><span>{{text}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row">-->
+          <!--<span class="detail-title">任务链接：</span><span>{{link}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
+          <!--<div class="publisher-content">-->
+          <!--<div class="row big">-->
+          <!--<span class="detail-title">备注：</span><span>{{tip}}</span>-->
+          <!--</div>-->
+          <!--</div>-->
           <div class="pic-content">
             <div class="proving-pic">
               <p class="pic-title">---验证图---</p>
@@ -105,9 +107,9 @@
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn" v-if="tabIndex==1&&tabIndex!=2">通过</el-button>
-            <el-button class="btn btn-margin" v-if="tabIndex==1&&tabIndex!=3" @click="rejectFtn">驳回</el-button>
-            <el-button class="btn btn-margin">下一个</el-button>
+            <el-button class="btn" v-if="1">通过</el-button>
+            <el-button class="btn btn-margin" v-if="1" @click="rejectFtn">驳回</el-button>
+            <el-button class="btn btn-margin" @click="nextTask">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
@@ -136,6 +138,8 @@
 
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
+  import axios from "axios";
+  import {getDate} from "../filter/data"
 
   export default {
     components: {
@@ -149,34 +153,29 @@
         noModal: false,
         noESC: false,
         //驳回弹框
-        taskDialog:false,
+        taskDialog: false,
         //进度条
         showTxt: true,
         //进度条线宽度
         chartBorder: 10,
         //进度宽度
         chartWidth: 100,
-        //类型的序列号
-        tabIndex: 0,
         //加载圈
         loading: '',
-        total: 0,
-        perPage: 20,
-        page: 1,
-        tableData2: [],
-        publisherName: "微猫微视",
-        publisherID: 557313,
-        title: "微信欲加好友解封帮助",
-        id: 652312,
-        type: "其他",
-        number: 3412,
-        price: 50,
-        equipment: "安卓",
-        createTime: "2018/08/21",
-        endTime: "2018/09/21",
-        text: "微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无效",
-        link: "https://www.baidu.com/",
-        tip: "接单前请仔细阅读以下操作步骤并满足所有条件，没满18岁的不要接单。不满足条件的，没诚心的，不愿意等的，不要接单。"
+        //任务id
+        taskId: '',
+        detailData: {
+          alias: '',//用户
+          ico: '',//图片
+          userId: '',//用户id
+          title: '',//标题
+          userNo: '',//用户编号
+          typeId: '',//任务类型
+          totalAcount: '',//任务总数
+          amount: '',//价格
+          deviceType: '',//设备类型（0 andriod 1ios 2 不限）
+          nextAutitedId: ''//下一个任务id 如果是-1返回列表页
+        }
       };
     },
     methods: {
@@ -191,27 +190,48 @@
       rejectFtn: function () {
         this.taskDialog = true;
       },
+      //下一个
+      nextTask() {
+        if (this.detailData.nextAutitedId !== 10057) {
+          this.taskId = this.detailData.nextAutitedId;
+          this.callBackDetailApi(this.taskId);
+        } else {
+          this.$router.go(-1);
+        }
+      },
+      callBackDetailApi(id) {
+        this.loading = this.$loading({
+          lock: true,
+          text: '请求数据中',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.8)',
+        });
+        axios.post(process.env.VUE_APP_HOST + "/task/back/detail", {
+          id: id
+        }).then(res => {
+          this.loading.close();
+          if (res.data.code === 200) {
+            this.detailData.name = 33;
+          }
+        }),
+          err => {
+            this.loading.close();
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
     },
-    computed: {},
     mounted() {
-      console.log("=====", this.$route.query.id);
-      console.log("=====", this.$route.query.tabIndex);
-      this.tabIndex = this.$route.query.tabIndex;
-      // this.loading = this.$loading({
-      //   lock: true,
-      //   text: '加载中',
-      //   spinner: 'el-icon-loading',
-      //   background: 'rgba(0, 0, 0, 0.8)',
-      // });
-      // setTimeout(() => {
-      //   this.loading.close();
-      // }, 2000);
+      this.taskId = this.$route.query.id;
+      this.callBackDetailApi(this.$route.query.id);
 
-    },
-    destroyed: function () {
-      // this.loading.close();
     }
-  };
+    ,
+    destroyed: function () {
+      this.detailData = {};
+      this.loading.close();
+    }
+  }
+  ;
 </script>
 <style lang="scss" scoped>
   //列表和头部的公共样式

@@ -54,7 +54,7 @@
                 width="180">
                 <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="goDetail(scope)"
+                    @click.native.prevent="goDetail(scope.row)"
                     type="text"
                     size="small">
                     {{scope.row.taskTitle}}
@@ -73,14 +73,14 @@
                 prop="lastTime"
                 label="截止时间">
                 <template slot-scope="scope">
-                  <span class="user-name">{{getDateTime(scope.row['lastTime'])}}</span>
+                  <span>{{getDateTime(scope.row['lastTime'])}}</span>
                 </template>
               </el-table-column>
               <el-table-column
                 prop="createTime"
                 label="创建时间">
                 <template slot-scope="scope">
-                  <span class="user-name">{{getDateTime(scope.row['createTime'])}}</span>
+                  <span>{{getDateTime(scope.row['createTime'])}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -91,7 +91,7 @@
             </div>
             <el-pagination
               @current-change="handleCurrentChange"
-              :page-size="10"
+              :page-size="perPage"
               layout="prev, pager, next, jumper"
               :total="total">
             </el-pagination>
@@ -105,6 +105,7 @@
 <script>
 
   import axios from "axios";
+  import {getDate} from "../filter/data"
 
   export default {
     data() {
@@ -121,16 +122,9 @@
       };
     },
     methods: {
-      //时间戳转时间yy-mm-dd:hh:mm:ss
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
       getDateTime(data) {
-        let date = new Date(data);
-        let Y = date.getFullYear() + '-';
-        let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-        let D = date.getDate() + ' ';
-        let h = date.getHours() + ':';
-        let m = date.getMinutes() + ':';
-        let s = date.getSeconds();
-        return Y + M + D + h + m + s;
+        return getDate(data);
       },
       handleCurrentChange(val) {
         this.page = val;
@@ -147,10 +141,10 @@
         this.page = 1;
         this.callBackApi(this.page);
       },
-      goDetail(index) {
+      goDetail(data) {
         this.$router.push({
           path: '/task-detail',
-          query: {id: index.$index, tabIndex: this.tabIndex}
+          query: {id: data.id}
         })
       },
       callBackApi(page) {
@@ -166,7 +160,6 @@
             let data = res.data.data;
             this.total = data.total;
             this.taskLists = data.records;
-            console.log('this.taskLists', data.records)
           }
         }),
           err => {
@@ -177,7 +170,11 @@
     },
     computed: {},
     beforeMount() {
+      this.taskType = 0;
       this.callBackApi(this.page);
+    },
+    destroyed: function () {
+      this.taskLists = [];
     }
   };
 </script>

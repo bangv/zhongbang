@@ -4,19 +4,19 @@
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
-          <li @click="tabChange(1)">
+          <li @click="tabChange(1,1)">
             <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待处理</span>
           </li>
 
-          <li @click="tabChange(2)">
+          <li @click="tabChange(2,2)">
             <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已处理</span>
           </li>
 
-          <li @click="tabChange(3)">
+          <li @click="tabChange(3,3)">
             <span :class="{'active':tabIndex==3,'':tabIndex!=3}">完结</span>
           </li>
 
-          <li @click="tabChange(4)">
+          <li @click="tabChange(4,'')">
             <span class="last-bd" :class="{'active':tabIndex==4,'':tabIndex!=4}">全部</span>
           </li>
         </ul>
@@ -27,45 +27,55 @@
         <b-card class="text-center sale-table">
           <div class="table-box">
             <el-table
-              :data="tableData2"
+              :data="applyLists"
               style="width: 100%"
               max-height="700" v-loading="loading">
               <el-table-column
-                prop="name"
+                prop="apealAlias"
                 label="申诉人">
                 <template slot-scope="scope">
-                  <img class="user-logo" src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" width="38" height="38" />
-                  <span class="user-name">{{scope.row.name}}</span>
+                  <div class="use-bg">
+                    <div>
+                      <img class="user-logo" :src="scope.row.apealIco" v-if="scope.row.apealIco" width="38"
+                           height="38"/>
+                    </div>
+                    <div class="use-name">
+                      <span class="user-name">{{scope.row.apealAlias}}</span>
+                    </div>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="order"
+                prop="orderNo"
                 label="单号">
               </el-table-column>
               <el-table-column
-                prop="title"
+                prop="taskTitle"
                 label="任务标题"
                 width="180">
                 <template slot-scope="scope">
                   <el-button
-                    @click.native.prevent="goDetail(scope)"
+                    @click.native.prevent="goDetail(scope.row)"
                     type="text"
                     size="small">
-                    {{scope.row.title}}
+                    {{scope.row.taskTitle}}
                   </el-button>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="complainant"
+                prop="toApealAlias"
                 label="被申诉人">
               </el-table-column>
               <el-table-column
-                prop="taskID"
+                prop="taskId"
                 label="任务ID">
               </el-table-column>
               <el-table-column
-                prop="startTime"
+                prop="publishTime"
                 label="申诉时间">
+                <template slot-scope="scope">
+                  <span class="user-name">{{getDateTime(scope.row['publishTime'])}}</span>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -74,7 +84,8 @@
               总共<span class="txt-rd">{{total}}</span>个任务
             </div>
             <el-pagination
-              :page-size="20"
+              :page-size="perPage"
+              @current-change="handleCurrentChange"
               layout="prev, pager, next, jumper"
               :total="total">
             </el-pagination>
@@ -88,100 +99,79 @@
 
 <script>
 
+  import axios from "axios";
+  import {getDate} from "../filter/data"
+
   export default {
     data() {
       return {
         total: 0,
-        perPage: 20,
+        perPage: 10,
         page: 1,
-        tableData2: [],
+        applyLists: [],
         tabIndex: 1,
+        taskType: 1,
         //加载圈
         loading: true,
       };
     },
     methods: {
-      loadSpiner() {
-        setTimeout(() => {
-          this.loading = false;
-        }, 2000);
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        return getDate(data);
+      },
+      handleCurrentChange(val) {
+        this.page = val;
+        this.loading = true;
+        this.callBackApi(this.page);
       },
       //切换tab方法
-      tabChange(index) {
+      tabChange(index, type) {
         if (this.tabIndex === index) return;
         this.tabIndex = index;
+        this.taskType = type;
         this.loading = true;
-        this.loadSpiner();
         //请求接口
-        this.search();
-      },
-      search() {
-        //api请求
+        this.page = 1;
+        this.callBackApi(this.page);
       },
       goDetail(index) {
         this.$router.push({
           path: '/apply-detail',
-          query: {id: index.$index, tabIndex: this.tabIndex}
+          query: {id: index.$index}
         })
       },
+      callBackApi(page) {
+        axios.post(process.env.VUE_APP_HOST + "/task/back/queryApeals", {
+          "nextId": 0,
+          "page": page,
+          "pageSize": this.pageSize,
+          "preId": 0,
+          "state": this.taskType
+        }).then(res => {
+          this.loading = false;
+          if (res.data.code === 200) {
+            let data = res.data.data;
+            this.total = data.total;
+            this.applyLists = data.records;
+          }
+        }),
+          err => {
+            this.loading = false;
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
 
     },
     computed: {},
     mounted() {
-      for (let i = 0; i < 200; i++) {
-        this.tableData2.push({
-          name: "张三" + i + 1,
-          order: "233",
-          title: "微信邀请好友",
-          complainant:"李四",
-          taskID:"2"+i+2,
-          startTime: "2018-09-20 12:34",
-          status: i
-        });
-      }
-      this.total = this.tableData2.length;
-      setTimeout(() => {
-        this.loading = false;
-      }, 2000);
-      this.$http.post(process.env.VUE_APP_HOST + '/user/login', {
-        "mobile": "4634",
-        "pwd": "123456",
-        "verifyCode": "1234"
-
-      }).then(res => {
-        console.log(res)
-      }), err => {
-        console.error('失败', err)
-      }
-      this.$http.post(process.env.VUE_APP_HOST + '/accout/userTransDetail', {
-        "lastTransTime": 0,
-        //     "size": 10
-
-      }).then(res => {
-        console.log(res)
-      }), err => {
-        console.error('失败', err)
-      }
-
-      // request({
-      //   url: Modules.SYS_LOGIN,
-      //   params: {
-      //     mobile: "4634",
-      //     pwd: "123456",
-      //     verifyCode: "1234"
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      // });
-      // request({
-      //   url: Modules.SYS_CHANGE,
-      //   params:{
-      //     "lastTransTime": 0,
-      //     "size": 10
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      // });
+    },
+    beforeMount() {
+      this.taskType = 1;
+      this.callBackApi(this.page);
+    },
+    destroyed: function () {
+      this.applyLists = [];
     }
   };
 </script>
@@ -232,10 +222,22 @@
         margin-right: 15px;
       }
     }
-    .user-logo{
+    .use-bg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      div {
+        flex: 1;
+        text-align: right;
+        &.use-name {
+          text-align: left;
+        }
+      }
+    }
+    .user-logo {
       border-radius: 50%;
     }
-    .user-name{
+    .user-name {
       display: inline-block;
       padding-left: 5px;
     }

@@ -1,4 +1,4 @@
-export function formatDate (date, fmt) {
+export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
   }
@@ -16,8 +16,20 @@ export function formatDate (date, fmt) {
     }
   }
   return fmt
-};
+}
 
-function padLeftZero (str) {
+//时间戳转时间yy-mm-dd:hh:mm:ss
+export function getDate(data) {
+  let date = new Date(data);
+  let Y = date.getFullYear() + '-';
+  let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+  let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+  let h = date.getHours() + ':';
+  let m = date.getMinutes() + ':';
+  let s = date.getSeconds();
+  return Y + M + D + h + m + s;
+}
+
+function padLeftZero(str) {
   return ('00' + str).substr(str.length)
 }
