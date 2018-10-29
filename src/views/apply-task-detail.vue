@@ -10,7 +10,9 @@
           <div class="publisher-wrap">
             <span class="publisher">申诉人：</span>
             <div class="head-sculpture">
-              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
+              <img
+                src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132"
+                title="头像"/>
             </div>
             <div class="publisher-tip">
               <p class="name">{{publisherName}}</p>
@@ -320,18 +322,17 @@
           text-align: center;
           margin-bottom: 20px;
           .pic-box {
-            display: flex;
-            justify-content: center;
+
             .pic01 {
-              width: 420px;
-              height: 400px;
-              background: #ccc;
-            }
-            .pic02 {
-              width: 420px;
-              height: 400px;
-              background: #ccc;
-              margin-left: 30px;
+              display: inline-block;
+              width: 30%;
+              height: 550px;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
             }
           }
 

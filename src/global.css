@@ -122,7 +122,8 @@ thead th {
 .dialog-title .payment-content p .detail-title {
     color: #999;
 }
-.el-message{
-    color: red !important;
+
+.el-loading-spinner i{
+    font-size: 38px!important;
 }
 

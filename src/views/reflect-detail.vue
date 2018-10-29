@@ -352,18 +352,17 @@
           text-align: center;
           margin-bottom: 20px;
           .pic-box {
-            display: flex;
-            justify-content: center;
+
             .pic01 {
-              width: 420px;
-              height: 747px;
-              background: red;
-            }
-            .pic02 {
-              width: 420px;
-              height: 747px;
-              background: blue;
-              margin-left: 30px;
+              display: inline-block;
+              width: 30%;
+              height: 550px;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
             }
           }
 

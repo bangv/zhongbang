@@ -9,7 +9,7 @@
           <p class="list-title">任务统计</p>
           <div class="content-chart">
             <div class="chart">
-              <el-progress type="circle" :percentage="80" :show-text="showTxt" :width="chartWidth"
+              <el-progress type="circle" :percentage="detailData.percentage" :show-text="showTxt" :width="chartWidth"
                            :stroke-width="chartBorder"
                            color="#FF9364"></el-progress>
             </div>
@@ -22,15 +22,15 @@
               </p>
             </div>
             <div>
-              <p class="count-b">80</p>
+              <p class="count-b">{{detailData.audited}}</p>
               <p class="content-b">已审核</p>
             </div>
             <div>
-              <p class="count-b">20</p>
+              <p class="count-b">{{detailData.toBeaudited}}</p>
               <p class="content-b">待审核</p>
             </div>
             <div>
-              <p class="count-b">100</p>
+              <p class="count-b">{{detailData.totalCount}}</p>
               <p class="content-b">任务总数量</p>
             </div>
           </div>
@@ -40,75 +40,78 @@
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
-              <img
-                src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132"
-                title="头像"/>
+              <img v-if="detailData.ico" :src="detailData.ico"
+                   title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{detailData.name}}</p>
-              <p class="id">ID：{{detailData.name}}</p>
+              <p class="name">{{detailData.alias}}</p>
+              <p class="id">ID：{{detailData.userId}}</p>
             </div>
           </div>
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<div class="w-30"><span class="detail-title">标题：</span><span>{{title}}</span></div>-->
-          <!--<div><span class="detail-title">编号：</span><span>{{id}}</span></div>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<div class="w-30"><span class="detail-title">类型：</span><span>{{type}}</span></div>-->
-          <!--<span class="detail-title">数量：</span><span>{{number}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<div class="w-30"><span class="detail-title">单价：</span><span>{{price}}元</span></div>-->
-          <!--<span class="detail-title">支持设备：</span><span class="col02">{{equipment}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<div class="w-30"><span class="detail-title">任务创建时间：</span><span>{{createTime}}</span></div>-->
-          <!--<span class="detail-title">任务截止时间：</span><span>{{endTime}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<span class="detail-title">文字验证：</span><span>{{text}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row">-->
-          <!--<span class="detail-title">任务链接：</span><span>{{link}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <!--<div class="publisher-content">-->
-          <!--<div class="row big">-->
-          <!--<span class="detail-title">备注：</span><span>{{tip}}</span>-->
-          <!--</div>-->
-          <!--</div>-->
-          <div class="pic-content">
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">标题：</span><span>{{detailData.title}}</span></div>
+              <div><span class="detail-title">编号：</span><span>{{detailData.userNo}}</span></div>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">类型：</span><span>{{detailData.typeId}}</span></div>
+              <span class="detail-title">数量：</span><span>{{detailData.totalAcount}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">单价：</span><span>{{detailData.amount}}元</span></div>
+              <span class="detail-title">支持设备：</span><span class="col02">{{detailData.deviceType}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">任务创建时间：</span><span>{{detailData.createTime}}</span></div>
+              <span class="detail-title">任务截止时间：</span><span>{{detailData.lastTime}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row">
+              <span class="detail-title">文字验证：</span><span>{{detailData.textVerify}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row">
+              <span class="detail-title">任务链接：</span><span>{{detailData.href}}</span>
+            </div>
+          </div>
+          <div class="publisher-content">
+            <div class="row big">
+              <span class="detail-title">备注：</span><span>{{detailData.remarker}}</span>
+            </div>
+          </div>
+          <div class="pic-content" v-if="detailData.checkPics.length">
             <div class="proving-pic">
               <p class="pic-title">---验证图---</p>
               <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
+                <div class="pic01" v-for="item in detailData.checkPics">
+                  <img :src="item.url"
+                       title="验证图"/>
+                </div>
               </div>
             </div>
-            <div class="proving-pic">
+            <div class="proving-pic" v-if="detailData.taskDetails.length">
               <p class="pic-title">---操作步骤---</p>
               <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
+                <div class="pic01" v-for="item in detailData.taskDetails">
+                  <img :src="item.url"
+                       title="步骤图"/>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn" v-if="1">通过</el-button>
-            <el-button class="btn btn-margin" v-if="1" @click="rejectFtn">驳回</el-button>
+            <el-button class="btn" v-if="detailData.examineStatus===0" @click="success">通过</el-button>
+            <el-button class="btn btn-margin" v-if="detailData.examineStatus===0" @click="rejectFtn">驳回</el-button>
             <el-button class="btn btn-margin" @click="nextTask">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
@@ -123,23 +126,21 @@
       :close-on-click-modal="noModal"
       :close-on-press-escape="noESC"
       :before-close="handleClose" class="dialog-title" center>
-      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
-      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
+      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">{{detailData.backMessage}}
       </textarea>
       <span slot="footer" class="dialog-footer">
     <el-button @click="taskDialog = false">取 消</el-button>
-    <el-button type="primary" @click="taskDialog = false">确 定</el-button>
+    <el-button type="primary" @click="backTask">确 定</el-button>
   </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
   import axios from "axios";
-  import {getDate} from "../filter/data"
+  import {getDate} from "../filter/data";
 
   export default {
     components: {
@@ -161,24 +162,42 @@
         //进度宽度
         chartWidth: 100,
         //加载圈
-        loading: '',
-        //任务id
-        taskId: '',
+        loading: "",
         detailData: {
-          alias: '',//用户
-          ico: '',//图片
-          userId: '',//用户id
-          title: '',//标题
-          userNo: '',//用户编号
-          typeId: '',//任务类型
-          totalAcount: '',//任务总数
-          amount: '',//价格
-          deviceType: '',//设备类型（0 andriod 1ios 2 不限）
-          nextAutitedId: ''//下一个任务id 如果是-1返回列表页
+          //驳回原因
+          backMessage: "",
+          //任务id
+          taskId: "",
+          nextAutitedId: "", //下一个任务id 如果是-1返回列表页
+          toBeaudited: "", //待审核任务数
+          audited: "", //已审核数
+          totalCount: "", //总任务数量
+          percentage: 0, //百分比
+          alias: "", //用户
+          ico: "", //图片
+          userId: "", //用户id
+          title: "", //标题
+          userNo: "", //用户编号
+          typeId: "", //任务类型
+          totalAcount: "", //任务数量
+          amount: "", //价格
+          deviceType: "", //设备类型（0 andriod 1ios 2 不限)
+          createTime: "", //创建时间
+          lastTime: "", //截止时间
+          textVerify: "", //文字说明
+          href: "", //任务链接
+          checkPics: [], //验证图
+          taskDetails: [], //步骤图
+          examineStatus: "", //任务状态
+          remarker: "" //备注
         }
       };
     },
     methods: {
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        return getDate(data);
+      },
       handleClose: function () {
         this.taskDialog = false;
       },
@@ -186,15 +205,35 @@
       back() {
         this.$router.go(-1);
       },
+      //通过
+      checkedTaskApi(type) {
+        axios
+          .post(process.env.VUE_APP_HOST + "/task/back/examine", {
+            examineText: this.detailData.backMessage,
+            pass: type,
+            submitId: this.detailData.taskId
+          })
+          .then(res => {
+            console.log(res);
+          });
+      },
+      success() {
+        this.checkedTaskApi(1);
+        this.nextTask();
+      },
       //驳回
-      rejectFtn: function () {
+      rejectFtn() {
         this.taskDialog = true;
+      },
+      backTask() {
+        this.taskDialog = false;
+        this.checkedTaskApi(0);
+        this.nextTask();
       },
       //下一个
       nextTask() {
-        if (this.detailData.nextAutitedId !== 10057) {
-          this.taskId = this.detailData.nextAutitedId;
-          this.callBackDetailApi(this.taskId);
+        if (this.detailData.nextAutitedId !== -1) {
+          this.callBackDetailApi(this.detailData.nextAutitedId);
         } else {
           this.$router.go(-1);
         }
@@ -202,18 +241,51 @@
       callBackDetailApi(id) {
         this.loading = this.$loading({
           lock: true,
-          text: '请求数据中',
-          spinner: 'el-icon-loading',
-          background: 'rgba(0, 0, 0, 0.8)',
+          text: "加载中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.8)"
         });
-        axios.post(process.env.VUE_APP_HOST + "/task/back/detail", {
-          id: id
-        }).then(res => {
-          this.loading.close();
-          if (res.data.code === 200) {
-            this.detailData.name = 33;
-          }
-        }),
+        axios
+          .post(process.env.VUE_APP_HOST + "/task/back/detail", {
+            id: id
+          })
+          .then(res => {
+            if (res.data.code === 200) {
+              var data = res.data.data;
+              this.detailData = {
+                taskId: data.id,
+                nextAutitedId: data.nextAutitedId,
+                toBeaudited: +data.toBeaudited,
+                audited: +data.audited,
+                totalCount: +data.totalCount,
+                percentage: parseInt((+data.audited / +data.totalCount) * 100),
+                alias: data.userDetail.alias,
+                ico: data.userDetail.ico,
+                userId: data.userDetail.userId,
+                title: data.title,
+                userNo: data.userNo,
+                typeId: data.typeId,
+                totalAcount: data.totalAcount,
+                amount: data.amount,
+                deviceType:
+                  data.deviceType == 0
+                    ? "安卓"
+                    : data.deviceType == 1
+                    ? "苹果"
+                    : "不限", //设备类型（0 andriod 1ios 2 不限)
+                createTime: data.createTime, //创建时间
+                lastTime: this.getDateTime(data.lastTime), //截止时间
+                textVerify: data.textVerify, //文字说明
+                href: data.href, //任务链接
+                taskDetails: data.taskDetails, //任务图
+                checkPics: data.checkPics, //步骤图
+                examineStatus: data.examineStatus,
+                remarker: data.remarker //备注
+              };
+              console.log(this.detailData);
+              this.loading.close();
+            }
+          }),
           err => {
             this.loading.close();
             this.$message("服务器故障，请稍候重试！");
@@ -221,22 +293,18 @@
       }
     },
     mounted() {
-      this.taskId = this.$route.query.id;
-      this.callBackDetailApi(this.$route.query.id);
-
-    }
-    ,
+      this.detailData.taskId = this.$route.query.id;
+      this.callBackDetailApi(this.detailData.taskId);
+    },
     destroyed: function () {
       this.detailData = {};
       this.loading.close();
     }
-  }
-  ;
+  };
 </script>
 <style lang="scss" scoped>
   //列表和头部的公共样式
   .task-detail {
-
     .app-body {
       margin-top: 0;
     }
@@ -288,10 +356,10 @@
             width: 10px;
             height: 10px;
             border-radius: 2px;
-            background: #D8DBDB;
+            background: #d8dbdb;
             margin-right: 5px;
             &.has {
-              background: #FF9364;
+              background: #ff9364;
             }
           }
         }
@@ -391,25 +459,21 @@
           text-align: center;
           margin-bottom: 20px;
           .pic-box {
-            display: flex;
-            justify-content: center;
+            text-align: center;
             .pic01 {
-              width: 420px;
-              height: 400px;
-              background: #ccc;
-            }
-            .pic02 {
-              width: 420px;
-              height: 400px;
-              background: #ccc;
-              margin-left: 30px;
+              display: inline-block;
+              width: 30%;
+              height: 550px;
+              margin-right: 10px;
+              margin-bottom: 10px;
+              img {
+                width: 100%;
+                height: 100%;
+              }
             }
           }
-
         }
       }
-
     }
-
   }
 </style>
