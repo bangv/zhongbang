@@ -10,59 +10,63 @@
           <div class="publisher-wrap">
             <span class="publisher">申诉人：</span>
             <div class="head-sculpture">
-              <img
-                src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132"
-                title="头像"/>
+              <img v-if="detailData.taskDetail.userDetail.ico" :src="detailData.taskDetail.userDetail.ico"
+                   title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{publisherName}}</p>
-              <p class="id">ID：{{publisherID}}</p>
+              <p class="name">{{detailData.taskDetail.userDetail.alias}}</p>
+              <p class="id">ID：{{detailData.taskDetail.userDetail.userId}}</p>
             </div>
           </div>
 
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">被申诉人：</span><span>小卡拉<span
-                class="detail-title">（ID:3422）</span></span></div>
-              <span class="detail-title">任务编号：</span><span>4213</span>
+              <div class="w-30"><span class="detail-title">被申诉人：</span><span>{{detailData.taskDetail.userId}}<span
+                class="detail-title">（ID:{{detailData.taskDetail.userId}}）</span></span></div>
+              <span class="detail-title">任务编号：</span><span>{{detailData.taskDetail.userId}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">任务标题：</span><span>注册app免费拿红包</span>
-              <div><span class="detail-title">任务标题：</span><span>其他</span></div>
+              <span class="detail-title">任务标题：</span><span>{{detailData.taskDetail.title}}</span>
+              <div><span class="detail-title">任务类型：</span><span>{{detailData.taskDetail.typeId}}</span></div>
             </div>
           </div>
 
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">文字验证：</span><span>微信名+ID</span></div>
-              <div><span class="detail-title">任务截止时间：</span><span>2018-10-25:14:30</span></div>
+              <div class="w-30"><span class="detail-title">文字验证：</span><span>{{detailData.taskDetail.textVerify}}</span>
+              </div>
+              <div><span class="detail-title">任务截止时间：</span><span>{{detailData.taskDetail.lastTime}}</span></div>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">任务链接：</span><span>{{link}}</span>
+              <span class="detail-title">任务链接：</span><span>{{detailData.taskDetail.href}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row big">
-              <span class="detail-title">备注：</span><span>{{tip}}</span>
+              <span class="detail-title">备注：</span><span>{{detailData.taskDetail.remarker}}</span>
             </div>
           </div>
-          <div class="pic-content">
+          <div class="pic-content" v-if="detailData.taskDetail.checkPics.length">
             <div class="proving-pic">
               <p class="pic-title">---验证图---</p>
               <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
+                <div class="pic01" v-for="item in detailData.taskDetail.checkPics">
+                  <img :src="item.url"
+                       title="验证图"/>
+                </div>
               </div>
             </div>
-            <div class="proving-pic">
+            <div class="proving-pic" v-if="detailData.taskDetail.taskDetails.length">
               <p class="pic-title">---操作步骤---</p>
               <div class="pic-box">
-                <div class="pic01"></div>
-                <div class="pic02"></div>
+                <div class="pic01" v-for="item in detailData.taskDetail.taskDetails">
+                  <img :src="item.url"
+                       title="验证图"/>
+                </div>
               </div>
             </div>
             <div class="proving-pic">
@@ -81,21 +85,6 @@
       </div>
     </div>
 
-    <el-dialog
-      title="驳回"
-      :visible.sync="taskDialog"
-      width="400px"
-      :close-on-click-modal="noModal"
-      :close-on-press-escape="noESC"
-      :before-close="handleClose" class="dialog-title" center>
-      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
-      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
-      </textarea>
-      <span slot="footer" class="dialog-footer">
-    <el-button @click="taskDialog = false">取 消</el-button>
-    <el-button type="primary" @click="taskDialog = false">确 定</el-button>
-  </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -103,6 +92,9 @@
 
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
+  import axios from "axios";
+  import {getDate} from "../filter/data";
+  import _ from "lodash";
 
   export default {
     components: {
@@ -112,54 +104,113 @@
     },
     data() {
       return {
-        //只能通过关闭按钮关
-        noModal: false,
-        noESC: false,
-        //驳回弹框
-        taskDialog: false,
-        //进度条
-        showTxt: true,
-        //进度条线宽度
-        chartBorder: 10,
-        //进度宽度
-        chartWidth: 100,
-        //类型的序列号
-        tabIndex: 0,
-        //加载圈
         loading: '',
-        total: 0,
-        perPage: 20,
-        page: 1,
-        tableData2: [],
-        publisherName: "微猫微视",
-        publisherID: 557313,
-        title: "微信欲加好友解封帮助",
-        id: 652312,
-        type: "其他",
-        number: 3412,
-        price: 50,
-        equipment: "安卓",
-        createTime: "2018/08/21",
-        endTime: "2018/09/21",
-        text: "微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无效",
-        link: "https://www.baidu.com/",
-        tip: "接单前请仔细阅读以下操作步骤并满足所有条件，没满18岁的不要接单。不满足条件的，没诚心的，不愿意等的，不要接单。"
+        detailData: {
+          "taskDetail": {
+            "amount": 0,
+            "applyCount": 0,
+            "applyed": 0,
+            "checkFailReason": "",
+            "checkPics": [],
+            "checkStaus": 0,
+            "checkTime": 0,
+            "checkingCount": 0,
+            "collected": 0,
+            "completeCount": 0,
+            "deviceType": 0,
+            "examineStatus": 0,
+            "href": "",
+            "id": 0,
+            "lastTime": 0,
+            "limitTime": 0,
+            "opVedio": "",
+            "proAmount": 0,
+            "recommend": 0,
+            "refreshTime": 0,
+            "refreshTimes": 0,
+            "remarker": "",
+            "status": 0,
+            "subFlag": 0,
+            "submitId": 0,
+            "taskDetails": [],
+            "taskNo": "",
+            "taskTypeName": "",
+            "textVerify": "",
+            "title": "",
+            "toped": 0,
+            "totalAcount": 0,
+            "totalfee": 0,
+            "typeIcon": "",
+            "typeId": 0,
+            "userDetail": {
+              "alias": "",
+              "alipayNo": "",
+              "birthDay": "",
+              "bondAmout": 0,
+              "errorDetail": "",
+              "followed": 0,
+              "gender": 0,
+              "ico": "",
+              "id": 0,
+              "level": 0,
+              "levelExpired": 0,
+              "mobile": "",
+              "pwd": "",
+              "realNamed": 0,
+              "refereeId": 0,
+              "salt": "",
+              "status": 0,
+              "success": true,
+              "truename": "",
+              "type": 0,
+              "userId": "",
+              "wxNo": ""
+            },
+            "userId": 0,
+            "userNo": ""
+          }
+        }
       };
     },
     methods: {
-      handleClose: function () {
-        this.taskDialog = false;
-      },
       //返回
       back() {
         this.$router.go(-1);
       },
+      callBackDetailApi(id) {
+        this.loading = this.$loading({
+          lock: true,
+          text: "加载中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.8)"
+        });
+        axios
+          .post(process.env.VUE_APP_HOST + "/task/back/apealOverView", {
+            id: +id
+          })
+          .then(res => {
+            if (res.data.code === 200) {
+              var data = res.data.data;
+              this.detailData = _.cloneDeep(data);
+              this.detailData.taskDetail.checkPics = data.taskDetail.checkPics;
+              this.detailData.taskDetail.taskDetails = data.taskDetail.taskDetails;
+              this.detailData.taskDetail.lastTime = this.getDateTime(data.taskDetail.lastTime);
+              this.loading.close();
+            }
+          }),
+          err => {
+            this.loading.close();
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
     },
-    computed: {},
     mounted() {
-
+      this.detailData.taskDetail.id = this.$route.query.id;
+      console.log(this.detailData.taskDetail.id)
+      this.callBackDetailApi(this.detailData.taskDetail.id);
     },
     destroyed: function () {
+      this.detailData = {};
       this.loading.close();
     }
   };

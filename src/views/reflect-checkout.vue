@@ -140,7 +140,7 @@
       goDetail(index) {
         this.$router.push({
           path: '/reflect-detail',
-          query: {id: index.$index}
+          query: {id: index.id}
         })
       },
       callBackApi(page) {

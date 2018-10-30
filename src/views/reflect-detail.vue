@@ -9,7 +9,7 @@
           <p class="list-title">任务统计</p>
           <div class="content-chart">
             <div class="chart">
-              <el-progress type="circle" :percentage="80" :show-text="showTxt" :width="chartWidth"
+              <el-progress type="circle" :percentage="detailData.percentage" :show-text="showTxt" :width="chartWidth"
                            :stroke-width="chartBorder"
                            color="#FF9364"></el-progress>
             </div>
@@ -22,15 +22,15 @@
               </p>
             </div>
             <div>
-              <p class="count-b">80</p>
+              <p class="count-b">{{detailData.audited}}</p>
               <p class="content-b">已审核</p>
             </div>
             <div>
-              <p class="count-b">20</p>
+              <p class="count-b">{{detailData.toBeaudited}}</p>
               <p class="content-b">待审核</p>
             </div>
             <div>
-              <p class="count-b">100</p>
+              <p class="count-b">{{detailData.totalCount}}</p>
               <p class="content-b">任务总数量</p>
             </div>
           </div>
@@ -39,51 +39,59 @@
           <p class="list-title">提现详情</p>
           <div class="publisher-wrap">
             <span class="publisher">申请人：</span>
+
             <div class="head-sculpture">
-              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
+              <img v-if="detailData.userDetail.ico" :src="detailData.userDetail.ico"
+                   title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{publisherName}}</p>
-              <p class="id">ID：{{publisherID}}</p>
+              <p class="name">{{detailData.userDetail.alias}}</p>
+              <p class="id">ID：{{detailData.userDetail.userId}}</p>
+            </div>
+          </div>
+
+
+          <div class="publisher-content">
+            <div class="row">
+              <div class="w-30"><span class="detail-title">提现类别：</span><span>{{detailData.transType}}</span></div>
+              <div><span class="detail-title">单号：</span><span>{{detailData.orderNo}}</span></div>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">提现类别：</span><span>任务币提现</span></div>
-              <div><span class="detail-title">单号：</span><span>6859</span></div>
+              <div class="w-30"><span class="detail-title">提现现金：</span><span>{{detailData.withdrawVO.amount?detailData.withdrawVO.amount:0}}元</span>
+              </div>
+              <span class="detail-title">申请时间：</span><span>{{detailData.subTime}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">提现现金：</span><span>45元</span></div>
-              <span class="detail-title">申请时间：</span><span>2018-10-20 12:00</span>
+              <div class="w-30"><span class="detail-title">支付宝账号：</span><span>{{detailData.withdrawVO.accoutNo}}</span>
+              </div>
+              <span class="detail-title">支付宝姓名：</span><span class="col02">{{detailData.withdrawVO.realName}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">支付宝账号：</span><span>158***8525</span></div>
-              <span class="detail-title">支付宝姓名：</span><span class="col02">{{publisherName}}</span>
+              <div class="w-30"><span class="detail-title">上次提现金额：</span><span>{{detailData.lastAmount?detailData.lastAmount:0}}元</span>
+              </div>
+              <span class="detail-title">上次提现类别：</span><span>{{detailData.lastTranType}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">上次提现金额：</span><span>600元</span></div>
-              <span class="detail-title">上次提现类别：</span><span>保证金提现</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">会员等级：</span><span>青铜会员</span></div>
-              <span class="detail-title">账户余额：</span><span>123元</span>
+              <div class="w-30"><span
+                class="detail-title">会员等级：</span><span> {{detailData.withdrawVO.memberLevel}}</span></div>
+              <span class="detail-title">账户余额：</span><span>{{detailData.balance?detailData.balance:0}}元</span>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn">通过</el-button>
-            <el-button class="btn btn-margin" @click="rejectFtn">驳回</el-button>
-            <el-button class="btn btn-margin" @click="paymentDialog">转账</el-button>
-            <el-button class="btn btn-margin">下一个</el-button>
+            <el-button class="btn" v-if="detailData.status===0" @click="success">通过</el-button>
+            <el-button class="btn btn-margin" v-if="detailData.status===0" @click="rejectFtn">驳回</el-button>
+            <el-button class="btn btn-margin" v-if="detailData.status===2" @click="paymentDialog">转账</el-button>
+            <el-button class="btn btn-margin" @click="nextTask">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
@@ -96,28 +104,28 @@
       :close-on-click-modal="noModal"
       :close-on-press-escape="noESC"
       :before-close="handleClose" class="dialog-title" center>
-      <textarea v-if="!isReject" rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">
-      微信名+ID,必须正确截图,所需图片步骤写的一清二楚,否则一律举报无
-      </textarea>
+      <textarea v-if="!isReject" rows="5" cols="20" class="text-content"
+                placeholder="请输入驳回的原因">{{backMessage}}</textarea>
       <div v-if="isReject">
         <div class="payment-content">
-          <p><span class="detail-title">申诉人：</span><span>微猫微视</span></p>
-          <p class="pd-30"><span class="detail-title">单号：</span><span>2586</span></p>
+          <p><span class="detail-title">申诉人：</span><span>{{detailData.userDetail.alias}}</span></p>
+          <p class="pd-30"><span class="detail-title">单号：</span><span>{{detailData.orderNo}}</span></p>
         </div>
         <div class="payment-content">
-          <p><span class="detail-title">支付宝账号：</span><span>135****8695</span></p>
-          <p class="pd-30"><span class="detail-title">支付宝姓名：</span><span>张三</span></p>
+          <p><span class="detail-title">支付宝账号：</span><span>{{detailData.withdrawVO.accoutNo}}</span></p>
+          <p class="pd-30"><span class="detail-title">支付宝姓名：</span><span>{{detailData.withdrawVO.realName}}</span></p>
         </div>
 
         <div class="payment-content">
-          <p><span class="detail-title">提现类别：</span><span>任务币提现</span></p>
-          <p class="pd-30"><span class="detail-title">提现金额：</span><span>600</span></p>
+          <p><span class="detail-title">提现类别：</span><span>{{detailData.transType}}</span></p>
+          <p class="pd-30"><span class="detail-title">提现金额：</span><span>{{detailData.withdrawVO.amount?detailData.withdrawVO.amount:0}}元</span>
+          </p>
         </div>
       </div>
 
       <span slot="footer" class="dialog-footer">
     <el-button @click="rejectDialog = false">取 消</el-button>
-    <el-button type="primary" @click="rejectDialog = false">确 定</el-button>
+    <el-button type="primary" @click="backAndPayTask">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -126,6 +134,9 @@
 <script>
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
+  import axios from "axios";
+  import {getDate} from "../filter/data";
+  import _ from "lodash";
 
   export default {
     components: {
@@ -143,7 +154,7 @@
         //是否为驳回 反之为付款
         isReject: false,
         //弹框标题
-        DialogTitle: '',
+        DialogTitle: "",
         //进度条
         showTxt: true,
         //进度条线宽度
@@ -153,13 +164,27 @@
         //类型的序列号
         tabIndex: 0,
         //加载圈
-        loading: '',
-        total: 0,
-        perPage: 20,
-        page: 1,
-        tableData2: [],
-        publisherName: "微猫微视",
-        publisherID: 557313,
+        loading: "",
+        backMessage: "", //驳回原因
+        detailData: {
+          //任务id
+          id: "",
+          nextAutitedId: "", //下一个任务id 如果是-1返回列表页
+          toBeaudited: "", //待审核任务数
+          audited: "", //已审核数
+          totalCount: "", //总任务数量
+          percentage: 0, //百分比
+          userDetail: {ico: "", userId: ""},
+          status: '',//当前任务状态
+          transType: "", //提现类别
+          userId: "", //用户id
+          orderNo: "", //单号
+          withdrawVO: {amount: 0, accoutNo: "", realName: "", memberLevel: ""},
+          subTime: "", //申请时间
+          lastAmount: "", //上次提现金额
+          lastTranType: "", //上次提现类别
+          balance: "" //余额
+        }
       };
     },
     methods: {
@@ -168,27 +193,104 @@
       },
       //驳回
       rejectFtn: function () {
-        this.DialogTitle = '驳回';
-        this.isReject = false;
         this.rejectDialog = true;
+        this.DialogTitle = "驳回";
+        this.isReject = false;
       },
       //转账
       paymentDialog: function () {
         this.rejectDialog = true;
-        this.DialogTitle = '提现转账';
+        this.DialogTitle = "提现转账";
         this.isReject = true;
+      },
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        return getDate(data);
       },
       //返回
       back() {
         this.$router.go(-1);
       },
+      //审核接口
+      checkedTaskApi(type) {
+        axios
+          .post(process.env.VUE_APP_HOST + "/accout/back/transCheck", {
+            "id": this.detailData.id,
+            "pass": type,//1通过 0驳回
+            "reason": type ? '' : this.backMessage,
+            "userId": this.detailData.userDetail.userId
+          })
+          .then(res => {
+            let message = type ? "通过成功" : "驳回成功";
+            if (res.data.code === 200) {
+              this.rejectDialog = false;
+              this.$message(message);
+              this.nextTask();
+            }
+          });
+      },
+      success() {
+        this.checkedTaskApi(1);
+      },
+      backAndPayTask() {
+        if (this.detailData.status === 2) {//待付款 转账
+          axios
+            .post(process.env.VUE_APP_HOST + "/accout/back/transfer", {transId: this.detailData.id})
+            .then(res => {
+              if (res.data.code === 200) {
+                this.rejectDialog = false;
+                this.$message('转账成功');
+                this.nextTask();
+              }
+            });
+        } else {//待审核 驳回
+          this.checkedTaskApi(0);
+        }
+      },
+      //下一个
+      nextTask() {
+        if (this.detailData.nextAutitedId !== -1) {
+          this.callBackDetailApi(this.detailData.nextAutitedId);
+        } else {
+          this.$router.go(-1);
+        }
+      },
+      callBackDetailApi(id) {
+        this.loading = this.$loading({
+          lock: true,
+          text: "加载中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.8)"
+        });
+        axios
+          .post(process.env.VUE_APP_HOST + "/accout/back/detail", {
+            id: id
+          })
+          .then(res => {
+            if (res.data.code === 200) {
+              var data = res.data.data;
+              this.detailData = _.cloneDeep(data);
+              this.detailData.percentage = parseInt(
+                (+data.audited / +data.totalCount) * 100
+              );
+              this.detailData.subTime = this.getDateTime(data.subTime);
+              this.detailData.withdrawVO.accoutNo = data.withdrawVO.accoutNo.substr(0, 3) + '****' + data.withdrawVO.accoutNo.substr(7);
+              this.loading.close();
+            }
+          }),
+          err => {
+            this.loading.close();
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
     },
-    computed: {},
     mounted() {
-      console.log("=====", this.$route.query.id);
+      this.detailData.id = this.$route.query.id;
+      this.callBackDetailApi(this.detailData.id);
     },
     destroyed: function () {
-      // this.loading.close();
+      this.detailData = {};
+      this.loading.close();
     }
   };
 </script>
@@ -249,10 +351,10 @@
             width: 10px;
             height: 10px;
             border-radius: 2px;
-            background: #D8DBDB;
+            background: #d8dbdb;
             margin-right: 5px;
             &.has {
-              background: #FF9364;
+              background: #ff9364;
             }
           }
         }
@@ -352,7 +454,6 @@
           text-align: center;
           margin-bottom: 20px;
           .pic-box {
-
             .pic01 {
               display: inline-block;
               width: 30%;
@@ -365,10 +466,8 @@
               }
             }
           }
-
         }
       }
     }
-
   }
 </style>

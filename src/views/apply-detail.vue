@@ -9,7 +9,7 @@
           <p class="list-title">申诉统计</p>
           <div class="content-chart">
             <div class="chart">
-              <el-progress type="circle" :percentage="80" :show-text="showTxt" :width="chartWidth"
+              <el-progress type="circle" :percentage="detailData.percentage" :show-text="showTxt" :width="chartWidth"
                            :stroke-width="chartBorder"
                            color="#FF9364"></el-progress>
             </div>
@@ -22,15 +22,15 @@
               </p>
             </div>
             <div>
-              <p class="count-b">80</p>
+              <p class="count-b">{{detailData.cmpCount}}</p>
               <p class="content-b">已处理</p>
             </div>
             <div>
-              <p class="count-b">20</p>
+              <p class="count-b">{{detailData.unCmpCout}}</p>
               <p class="content-b">待处理</p>
             </div>
             <div>
-              <p class="count-b">100</p>
+              <p class="count-b">{{detailData.totalCount}}</p>
               <p class="content-b">总申诉数</p>
             </div>
           </div>
@@ -40,43 +40,44 @@
           <div class="publisher-wrap">
             <span class="publisher">申诉人：</span>
             <div class="head-sculpture">
-              <img src="https://wx.qlogo.cn/mmopen/vi_32/fibhGLYiayiaU4348d0qhFFt2iaMwOq5UlibvOUxnlmG5IBn0NBXcsaNhMv36ibyENRdHUQnSDSlGIwialTJlKdoP5ZEQ/132" title="头像"/>
+              <img v-if="detailData.apealIco" :src="detailData.apealIco"
+                   title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{publisherName}}</p>
-              <p class="id">ID：{{publisherID}}</p>
+              <p class="name">{{detailData.apealAlias}}</p>
+              <p class="id">ID：{{detailData.apealId}}</p>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">单号：</span><span>8596</span></div>
-              <div><span class="detail-title">申诉时间：</span><span>2018-10-25:14:30</span></div>
+              <div class="w-30"><span class="detail-title">单号：</span><span>{{detailData.orderNo}}</span></div>
+              <div><span class="detail-title">申诉时间：</span><span>{{detailData.publishTime}}</span></div>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">被申诉人：</span><span>小卡拉<span
-                class="detail-title">（ID:3422）</span></span></div>
-              <span class="detail-title">任务编号：</span><span>4213</span>
+              <div class="w-30"><span class="detail-title">被申诉人：</span><span>{{detailData.toApealAlias}}<span
+                class="detail-title">（ID:{{detailData.toApealId}}）</span></span></div>
+              <span class="detail-title">任务编号：</span><span>{{detailData.taskId}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">任务标题：</span><span>注册app免费拿红包</span>
+              <span class="detail-title">任务标题：</span><span>{{detailData.taskTitle}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">申诉原因：</span><span>上传的截图和完成任务步骤全按发布方要求，发布方却评定为任务不合格。</span>
+              <span class="detail-title">申诉原因：</span><span>{{detailData.remarker}}</span>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
-            <el-button class="btn" @click="detail">查看详情</el-button>
-            <el-button class="btn btn-margin">已处理</el-button>
-            <el-button class="btn btn-margin">已完结</el-button>
-            <el-button class="btn btn-margin">下一个</el-button>
+            <el-button class="btn"  @click="detail">查看详情</el-button>
+            <el-button class="btn btn-margin" @click="checkout(1)" v-if="detailData.state==1">已处理</el-button>
+            <el-button class="btn btn-margin" @click="checkout(2)" v-if="detailData.state==2">已完结</el-button>
+            <el-button class="btn btn-margin" @click="nextTask">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
@@ -89,7 +90,9 @@
 
   import {Header as AppHeader, SidebarFooter} from "@coreui/vue";
   import HeaderTop from "../components/headerTop";
-
+  import axios from "axios";
+  import {getDate} from "../filter/data";
+  import _ from "lodash";
 
   export default {
     components: {
@@ -108,42 +111,122 @@
         //类型的序列号
         tabIndex: 0,
         //加载圈
-        loading:'',
-        total: 0,
-        perPage: 20,
-        page: 1,
-        tableData2: [],
-        publisherName: "微猫微视",
-        publisherID: 557313,
+        loading: '',
+        detailData: {
+          "apealAlias": "",
+          "apealIco": "",
+          "apealId": "",
+          "cmpCount": 0,
+          "id": 0,
+          "nextId": 0,
+          "orderNo": "",
+          "publishTime": 0,
+          "remarker": "",
+          "state": 0,
+          "subId": 0,
+          "taskId": "",
+          "taskTitle": "",
+          "toApealAlias": "",
+          "toApealId": "",
+          "totalCount": 0,
+          "unCmpCout": 0,
+          "percentage": 0
+        }
       };
     },
     methods: {
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        return getDate(data);
+      },
+      //下一个
+      nextTask() {
+        if (this.detailData.nextId !== -1) {
+          this.callBackDetailApi(this.detailData.nextId);
+        } else {
+          this.$router.go(-1);
+        }
+      },
       //详情
-      detail(){
+      detail() {
         this.$router.push({
           path: '/apply-task-detail',
+          query: {id: this.detailData.id}
         })
       },
       //返回
       back() {
         this.$router.go(-1);
       },
+      //申诉处理api
+      checkout(state) {
+        if (state === 1) {
+          axios
+            .post(process.env.VUE_APP_HOST + "/task/back/apealDeal", {
+              id: this.detailData.id
+            }).then(res => {
+            if (res.data.code === 200) {
+              this.$message("处理成功");
+              this.nextTask();
+            }
+          }),
+            err => {
+              this.loading.close();
+              this.$message("服务器故障，请稍候重试！");
+              this.nextTask();
+            };
+        } else {
+          axios
+            .post(process.env.VUE_APP_HOST + "/task/back/apealCmplete", {
+              id: this.detailData.id
+            }).then(res => {
+            if (res.data.code === 200) {
+              this.$message("完结成功");
+              this.nextTask();
+            }
+          }),
+            err => {
+              this.loading.close();
+              this.$message("服务器故障，请稍候重试！");
+            };
+        }
+
+      },
+      //详情api
+      callBackDetailApi(id) {
+        this.loading = this.$loading({
+          lock: true,
+          text: "加载中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.8)"
+        });
+        axios
+          .post(process.env.VUE_APP_HOST + "/task/back/apealDetail", {
+            id: id
+          })
+          .then(res => {
+            if (res.data.code === 200) {
+              var data = res.data.data;
+              this.detailData = _.cloneDeep(data);
+              this.detailData.percentage = parseInt((+data.cmpCount / +data.totalCount) * 100);
+              this.detailData.publishTime = this.getDateTime(data.publishTime);
+              this.detailData.nextId = data.nextId ? data.nextId : -1;
+              this.loading.close();
+            }
+          }),
+          err => {
+            this.loading.close();
+            this.$message("服务器故障，请稍候重试！");
+          };
+      }
     },
-    computed: {},
     mounted() {
-      console.log("=====", this.$route.query.id);
-      // this.loading =  this.$loading({
-      //   lock: true,
-      //   text: '加载中',
-      //   spinner: 'el-icon-loading',
-      //   background: 'rgba(0, 0, 0, 0.8)',
-      // });
-      // setTimeout(() => {
-      //   this.loading.close();
-      // }, 2000);
+      this.detailData.id = this.$route.query.id;
+      this.callBackDetailApi(this.detailData.id);
     },
     destroyed: function () {
-      // this.loading.close();
+      this.detailData = {};
+      this.loading.close();
     }
   };
 </script>

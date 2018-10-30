@@ -138,7 +138,7 @@
       goDetail(index) {
         this.$router.push({
           path: '/apply-detail',
-          query: {id: index.$index}
+          query: {id: index.id}
         })
       },
       callBackApi(page) {

@@ -40,12 +40,12 @@
           <div class="publisher-wrap">
             <span class="publisher">发布方：</span>
             <div class="head-sculpture">
-              <img v-if="detailData.ico" :src="detailData.ico"
+              <img v-if="detailData.userDetail.ico" :src="detailData.userDetail.ico"
                    title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{detailData.alias}}</p>
-              <p class="id">ID：{{detailData.userId}}</p>
+              <p class="name">{{detailData.userDetail.alias}}</p>
+              <p class="id">ID：{{detailData.userDetail.userId}}</p>
             </div>
           </div>
           <div class="publisher-content">
@@ -126,8 +126,7 @@
       :close-on-click-modal="noModal"
       :close-on-press-escape="noESC"
       :before-close="handleClose" class="dialog-title" center>
-      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">{{detailData.backMessage}}
-      </textarea>
+      <textarea rows="5" cols="20" class="text-content" placeholder="请输入驳回的原因">{{backMessage}}</textarea>
       <span slot="footer" class="dialog-footer">
     <el-button @click="taskDialog = false">取 消</el-button>
     <el-button type="primary" @click="backTask">确 定</el-button>
@@ -141,6 +140,7 @@
   import HeaderTop from "../components/headerTop";
   import axios from "axios";
   import {getDate} from "../filter/data";
+  import _ from "lodash";
 
   export default {
     components: {
@@ -163,18 +163,17 @@
         chartWidth: 100,
         //加载圈
         loading: "",
+        //驳回原因
+        backMessage: "",
         detailData: {
-          //驳回原因
-          backMessage: "",
           //任务id
-          taskId: "",
+          id: "",
           nextAutitedId: "", //下一个任务id 如果是-1返回列表页
           toBeaudited: "", //待审核任务数
           audited: "", //已审核数
           totalCount: "", //总任务数量
           percentage: 0, //百分比
-          alias: "", //用户
-          ico: "", //图片
+          userDetail:{ico:'',userId:''},
           userId: "", //用户id
           title: "", //标题
           userNo: "", //用户编号
@@ -188,7 +187,7 @@
           href: "", //任务链接
           checkPics: [], //验证图
           taskDetails: [], //步骤图
-          examineStatus: "", //任务状态
+          status: "", //任务状态
           remarker: "" //备注
         }
       };
@@ -205,30 +204,33 @@
       back() {
         this.$router.go(-1);
       },
-      //通过
+      //审核接口
       checkedTaskApi(type) {
         axios
           .post(process.env.VUE_APP_HOST + "/task/back/examine", {
-            examineText: this.detailData.backMessage,
+            examineText: this.backMessage,
             pass: type,
-            submitId: this.detailData.taskId
+            submitId: this.detailData.id
           })
           .then(res => {
-            console.log(res);
+            let message = type ? "通过成功" : "驳回成功";
+            if (res.data.code === 200) {
+              this.taskDialog = false;
+              this.$message(message);
+              this.nextTask();
+            }
           });
       },
+      //通过
       success() {
         this.checkedTaskApi(1);
-        this.nextTask();
       },
       //驳回
       rejectFtn() {
         this.taskDialog = true;
       },
       backTask() {
-        this.taskDialog = false;
         this.checkedTaskApi(0);
-        this.nextTask();
       },
       //下一个
       nextTask() {
@@ -252,37 +254,9 @@
           .then(res => {
             if (res.data.code === 200) {
               var data = res.data.data;
-              this.detailData = {
-                taskId: data.id,
-                nextAutitedId: data.nextAutitedId,
-                toBeaudited: +data.toBeaudited,
-                audited: +data.audited,
-                totalCount: +data.totalCount,
-                percentage: parseInt((+data.audited / +data.totalCount) * 100),
-                alias: data.userDetail.alias,
-                ico: data.userDetail.ico,
-                userId: data.userDetail.userId,
-                title: data.title,
-                userNo: data.userNo,
-                typeId: data.typeId,
-                totalAcount: data.totalAcount,
-                amount: data.amount,
-                deviceType:
-                  data.deviceType == 0
-                    ? "安卓"
-                    : data.deviceType == 1
-                    ? "苹果"
-                    : "不限", //设备类型（0 andriod 1ios 2 不限)
-                createTime: data.createTime, //创建时间
-                lastTime: this.getDateTime(data.lastTime), //截止时间
-                textVerify: data.textVerify, //文字说明
-                href: data.href, //任务链接
-                taskDetails: data.taskDetails, //任务图
-                checkPics: data.checkPics, //步骤图
-                examineStatus: data.examineStatus,
-                remarker: data.remarker //备注
-              };
-              console.log(this.detailData);
+              this.detailData = _.cloneDeep(data);
+              this.detailData.percentage = parseInt((+data.audited / +data.totalCount) * 100);
+              this.detailData.lastTime = this.getDateTime(data.lastTime);
               this.loading.close();
             }
           }),
@@ -293,8 +267,8 @@
       }
     },
     mounted() {
-      this.detailData.taskId = this.$route.query.id;
-      this.callBackDetailApi(this.detailData.taskId);
+      this.detailData.id = this.$route.query.id;
+      this.callBackDetailApi(this.detailData.id);
     },
     destroyed: function () {
       this.detailData = {};
