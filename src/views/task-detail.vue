@@ -252,12 +252,12 @@
             id: id
           })
           .then(res => {
+            this.loading.close();
             if (res.data.code === 200) {
               var data = res.data.data;
               this.detailData = _.cloneDeep(data);
               this.detailData.percentage = parseInt((+data.audited / +data.totalCount) * 100);
               this.detailData.lastTime = this.getDateTime(data.lastTime);
-              this.loading.close();
             }
           }),
           err => {

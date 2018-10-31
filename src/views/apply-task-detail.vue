@@ -10,26 +10,27 @@
           <div class="publisher-wrap">
             <span class="publisher">申诉人：</span>
             <div class="head-sculpture">
-              <img v-if="detailData.taskDetail.userDetail.ico" :src="detailData.taskDetail.userDetail.ico"
+              <img v-if="detailData.userDetailVO.ico" :src="detailData.userDetailVO.ico"
                    title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{detailData.taskDetail.userDetail.alias}}</p>
-              <p class="id">ID：{{detailData.taskDetail.userDetail.userId}}</p>
+              <p class="name">{{detailData.userDetailVO.alias}}</p>
+              <p class="id">ID：{{detailData.userDetailVO.userId}}</p>
             </div>
           </div>
 
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">被申诉人：</span><span>{{detailData.taskDetail.userId}}<span
-                class="detail-title">（ID:{{detailData.taskDetail.userId}}）</span></span></div>
-              <span class="detail-title">任务编号：</span><span>{{detailData.taskDetail.userId}}</span>
+              <div class="w-30"><span class="detail-title">被申诉人：</span><span>{{detailData.taskDetail.userDetail.alias}}<span
+                class="detail-title">（ID:{{detailData.taskDetail.userDetail.userId}}）</span></span></div>
+              <span class="detail-title">任务编号：</span><span>{{detailData.taskDetail.taskNo}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">任务标题：</span><span>{{detailData.taskDetail.title}}</span>
-              <div><span class="detail-title">任务类型：</span><span>{{detailData.taskDetail.typeId}}</span></div>
+
+              <div class="w-30"><span class="detail-title">任务标题：</span><span>{{detailData.taskDetail.title}}</span></div>
+              <div><span class="detail-title">任务类型：</span><span>{{detailData.taskDetail.taskTypeName}}</span></div>
             </div>
           </div>
 
@@ -69,10 +70,10 @@
                 </div>
               </div>
             </div>
-            <div class="proving-pic">
+            <div class="proving-pic" v-if="detailData.taskDetail.checkFailReason">
               <p class="pic-title">---驳回原因---</p>
               <div class="pic-box">
-                未按要求上传验证图，详细任务截图请见操作步骤，验证图上传时间超过了任务截止时间。
+                {{detailData.taskDetail.checkFailReason}}
               </div>
             </div>
           </div>
@@ -168,11 +169,56 @@
             },
             "userId": 0,
             "userNo": ""
+          },
+          "taskSubmitDetail": {
+            "accoutId": 0,
+            "checkPics": [],
+            "claimTime": 0,
+            "examineExpired": 0,
+            "examineText": "",
+            "examineTime": 0,
+            "expiredTime": 0,
+            "id": 0,
+            "remarker": "",
+            "replyText": "",
+            "status": 0,
+            "subId": 0,
+            "subTime": 0,
+            "taskAmout": 0,
+            "taskId": 0
+          },
+          "userDetailVO": {
+            "alias": "",
+            "alipayNo": "",
+            "birthDay": "",
+            "bondAmout": 0,
+            "errorDetail": "",
+            "followed": 0,
+            "gender": 0,
+            "ico": "",
+            "id": 0,
+            "level": 0,
+            "levelExpired": 0,
+            "mobile": "",
+            "pwd": "",
+            "realNamed": 0,
+            "refereeId": 0,
+            "salt": "",
+            "status": 0,
+            "success": true,
+            "truename": "",
+            "type": 0,
+            "userId": "",
+            "wxNo": ""
           }
         }
       };
     },
     methods: {
+      // //时间戳转时间yy-mm-dd:hh:mm:ss
+      getDateTime(data) {
+        return getDate(data);
+      },
       //返回
       back() {
         this.$router.go(-1);
@@ -186,16 +232,17 @@
         });
         axios
           .post(process.env.VUE_APP_HOST + "/task/back/apealOverView", {
-            id: +id
+            subId: +id
           })
           .then(res => {
+            this.loading.close();
             if (res.data.code === 200) {
               var data = res.data.data;
               this.detailData = _.cloneDeep(data);
               this.detailData.taskDetail.checkPics = data.taskDetail.checkPics;
               this.detailData.taskDetail.taskDetails = data.taskDetail.taskDetails;
               this.detailData.taskDetail.lastTime = this.getDateTime(data.taskDetail.lastTime);
-              this.loading.close();
+
             }
           }),
           err => {
@@ -206,7 +253,6 @@
     },
     mounted() {
       this.detailData.taskDetail.id = this.$route.query.id;
-      console.log(this.detailData.taskDetail.id)
       this.callBackDetailApi(this.detailData.taskDetail.id);
     },
     destroyed: function () {

@@ -267,6 +267,7 @@
             id: id
           })
           .then(res => {
+            this.loading.close();
             if (res.data.code === 200) {
               var data = res.data.data;
               this.detailData = _.cloneDeep(data);
@@ -275,7 +276,7 @@
               );
               this.detailData.subTime = this.getDateTime(data.subTime);
               this.detailData.withdrawVO.accoutNo = data.withdrawVO.accoutNo.substr(0, 3) + '****' + data.withdrawVO.accoutNo.substr(7);
-              this.loading.close();
+
             }
           }),
           err => {

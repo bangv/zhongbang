@@ -151,7 +151,7 @@
       detail() {
         this.$router.push({
           path: '/apply-task-detail',
-          query: {id: this.detailData.id}
+          query: {id: this.detailData.subId}
         })
       },
       //返回
@@ -205,13 +205,13 @@
             id: id
           })
           .then(res => {
+            this.loading.close();
             if (res.data.code === 200) {
               var data = res.data.data;
               this.detailData = _.cloneDeep(data);
               this.detailData.percentage = parseInt((+data.cmpCount / +data.totalCount) * 100);
               this.detailData.publishTime = this.getDateTime(data.publishTime);
               this.detailData.nextId = data.nextId ? data.nextId : -1;
-              this.loading.close();
             }
           }),
           err => {
