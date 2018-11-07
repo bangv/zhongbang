@@ -63,7 +63,7 @@
               </el-table-column>
               <el-table-column
                 prop="amount"
-                label="价格">
+                label="价格(元)">
               </el-table-column>
               <el-table-column
                 prop="taskCount"
@@ -159,6 +159,9 @@
           if (res.data.code === 200) {
             let data = res.data.data;
             this.total = data.total;
+            for (let v in data.records) {
+              data.records[v]['amount'] = ((+data.records[v]['amount']) / 100).toFixed(2);
+            }
             this.taskLists = data.records;
           }
         }),

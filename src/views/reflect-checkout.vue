@@ -7,9 +7,9 @@
             <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待审核</span>
           </li>
 
-          <li @click="tabChange(2,200)">
-            <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已审核</span>
-          </li>
+          <!--<li @click="tabChange(2,200)">-->
+            <!--<span :class="{'active':tabIndex==2,'':tabIndex!=2}">已审核</span>-->
+          <!--</li>-->
 
           <li @click="tabChange(3,2)">
             <span :class="{'active':tabIndex==3,'':tabIndex!=3}">待付款</span>
@@ -70,7 +70,7 @@
               </el-table-column>
               <el-table-column
                 prop="amount"
-                label="金额">
+                label="金额(元)">
               </el-table-column>
               <el-table-column
                 prop="subTime"
@@ -155,6 +155,9 @@
           if (res.data.code === 200) {
             let data = res.data.data;
             this.total = data.total;
+            for (let v in data.records) {
+              data.records[v]['amount'] = ((+data.records[v]['amount']) / 100).toFixed(2);
+            }
             this.reflectLists = data.records;
           }
         }),

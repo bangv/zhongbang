@@ -226,7 +226,8 @@
       width: 100%;
       height: 100%;
       position: absolute;
-      background: #f5f5f5 url(../assets/login-bg.jpg) no-repeat center;
+      background: #f5f5f5 url(../assets/login-bg.jpg) no-repeat top left;
+      background-size: 100% 100%;
     }
     .logo_bg {
       width: 400px;

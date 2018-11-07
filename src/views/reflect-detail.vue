@@ -59,7 +59,7 @@
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">提现现金：</span><span>{{detailData.withdrawVO.amount?detailData.withdrawVO.amount:0}}元</span>
+              <div class="w-30"><span class="detail-title">提现现金：</span><span>{{detailData.withdrawVO.amount}}元</span>
               </div>
               <span class="detail-title">申请时间：</span><span>{{detailData.subTime}}</span>
             </div>
@@ -73,7 +73,7 @@
           </div>
           <div class="publisher-content">
             <div class="row">
-              <div class="w-30"><span class="detail-title">上次提现金额：</span><span>{{detailData.lastAmount?detailData.lastAmount:0}}元</span>
+              <div class="w-30"><span class="detail-title">上次提现金额：</span><span>{{detailData.lastAmount}}元</span>
               </div>
               <span class="detail-title">上次提现类别：</span><span>{{detailData.lastTranType}}</span>
             </div>
@@ -82,7 +82,7 @@
             <div class="row">
               <div class="w-30"><span
                 class="detail-title">会员等级：</span><span> {{detailData.withdrawVO.memberLevel}}</span></div>
-              <span class="detail-title">账户余额：</span><span>{{detailData.balance?detailData.balance:0}}元</span>
+              <span class="detail-title">账户余额：</span><span>{{detailData.balance}}元</span>
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@
       :close-on-press-escape="noESC"
       :before-close="handleClose" class="dialog-title" center>
       <textarea v-if="!isReject" rows="5" cols="20" class="text-content"
-                placeholder="请输入驳回的原因">{{backMessage}}</textarea>
+                placeholder="请输入驳回的原因" v-model="backMessage"></textarea>
       <div v-if="isReject">
         <div class="payment-content">
           <p><span class="detail-title">申诉人：</span><span>{{detailData.userDetail.alias}}</span></p>
@@ -118,7 +118,7 @@
 
         <div class="payment-content">
           <p><span class="detail-title">提现类别：</span><span>{{detailData.transType}}</span></p>
-          <p class="pd-30"><span class="detail-title">提现金额：</span><span>{{detailData.withdrawVO.amount?detailData.withdrawVO.amount:0}}元</span>
+          <p class="pd-30"><span class="detail-title">提现金额：</span><span>{{detailData.withdrawVO.amount}}元</span>
           </p>
         </div>
       </div>
@@ -217,8 +217,8 @@
           .post(process.env.VUE_APP_HOST + "/accout/back/transCheck", {
             "id": this.detailData.id,
             "pass": type,//1通过 0驳回
-            "reason": type ? '' : this.backMessage,
-            "userId": this.detailData.userDetail.userId
+            "reason": type ? '' : this.backMessage
+            // "userId": this.detailData.userDetail.userId
           })
           .then(res => {
             let message = type ? "通过成功" : "驳回成功";
@@ -274,9 +274,10 @@
               this.detailData.percentage = parseInt(
                 (+data.audited / +data.totalCount) * 100
               );
+              this.detailData.lastAmount = data.lastAmount?( +data.lastAmount / 100 ).toFixed( 2 ):0;
+              this.detailData.balance = data.balance?( +data.balance / 100 ).toFixed( 2 ):0;
               this.detailData.subTime = this.getDateTime(data.subTime);
-              this.detailData.withdrawVO.accoutNo = data.withdrawVO.accoutNo.substr(0, 3) + '****' + data.withdrawVO.accoutNo.substr(7);
-
+              this.detailData.withdrawVO.amount = data.withdrawVO.amount?( +data.withdrawVO.amount / 100 ).toFixed( 2 ):0;
             }
           }),
           err => {
@@ -459,6 +460,7 @@
               display: inline-block;
               width: 30%;
               height: 550px;
+              text-align: left;
               margin-right: 10px;
               margin-bottom: 10px;
               img {

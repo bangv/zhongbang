@@ -61,15 +61,15 @@
                 </div>
               </div>
             </div>
-            <div class="proving-pic" v-if="detailData.taskDetail.taskDetails.length">
-              <p class="pic-title">---操作步骤---</p>
-              <div class="pic-box">
-                <div class="pic01" v-for="item in detailData.taskDetail.taskDetails">
-                  <img :src="item.url"
-                       title="验证图"/>
-                </div>
-              </div>
-            </div>
+            <!--<div class="proving-pic" v-if="detailData.taskDetail.taskDetails.length">-->
+              <!--<p class="pic-title">-&#45;&#45;操作步骤-&#45;&#45;</p>-->
+              <!--<div class="pic-box">-->
+                <!--<div class="pic01" v-for="item in detailData.taskDetail.taskDetails">-->
+                  <!--<img :src="item.url"-->
+                       <!--title="验证图"/>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
             <div class="proving-pic" v-if="detailData.taskDetail.checkFailReason">
               <p class="pic-title">---驳回原因---</p>
               <div class="pic-box">
@@ -426,6 +426,7 @@
               height: 550px;
               margin-right: 10px;
               margin-bottom: 10px;
+              text-align: left;
               img {
                 width: 100%;
                 height: 100%;

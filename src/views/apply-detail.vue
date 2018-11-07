@@ -396,6 +396,7 @@
               height: 550px;
               margin-right: 10px;
               margin-bottom: 10px;
+              text-align: left;
               img {
                 width: 100%;
                 height: 100%;
