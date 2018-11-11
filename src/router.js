@@ -8,8 +8,15 @@ import reflect from "./views/reflect-checkout.vue";
 import TaskDetail from "./views/task-detail";
 import reflectDetail from "./views/reflect-detail";
 import applyDetail from "./views/apply-detail";
+import opinionDetail from "./views/opinion-detail";
 import PageLogin from "./views/PageLogin";
 import Forget from "./views/forget";
+import reward from "./views/reward-checkout";
+import opinion from "./views/opinion-checkout";
+import system from "./views/system-notice";
+import AddEditNotice from "./views/add-edit-notice";
+
+
 
 applyTaskDetail;
 import applyTaskDetail from "./views/apply-task-detail";
@@ -38,7 +45,11 @@ let router = new Router({
       name: "TaskDetail",
       component: TaskDetail
     },
-
+    {
+      path: "/add-edit-notice",
+      name: "AddNotice",
+      component: AddEditNotice
+    },
     {
       path: "/apply-task-detail",
       name: "applyTaskDetail",
@@ -53,6 +64,12 @@ let router = new Router({
       path: "/apply-detail",
       name: "applyDetail",
       component: applyDetail
+    },
+    ,
+    {
+      path: "/opinion-detail",
+      name: "opinionDetail",
+      component: opinionDetail
     },
     {
       path: "/home",
@@ -74,6 +91,21 @@ let router = new Router({
           path: "/apply",
           name: "申诉处理",
           component: apply
+        },
+        {
+          path: "/reward",
+          name: "奖励审核",
+          component: reward
+        },
+        {
+          path: "/opinion",
+          name: "意见反馈",
+          component: opinion
+        },
+        {
+          path: "/system",
+          name: "系统公告",
+          component: system
         }
       ]
     }

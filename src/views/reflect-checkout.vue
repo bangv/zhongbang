@@ -47,6 +47,7 @@
                     </div>
                     <div class="use-name">
                       <span class="user-name">{{scope.row.alias}}</span>
+                      <p class="user-id">ID:{{scope.row.userId}}</p>
                     </div>
                   </div>
                 </template>
@@ -76,7 +77,7 @@
                 prop="subTime"
                 label="创建时间">
                 <template slot-scope="scope">
-                  <span class="user-name">{{getDateTime(scope.row['subTime'])}}</span>
+                  <span>{{getDateTime(scope.row['subTime'])}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -246,7 +247,13 @@
     }
     .user-name {
       display: inline-block;
-      padding-left: 5px;
+      padding-left: 10px;
+    }
+    .user-id {
+      padding-left: 10px;
+      color: #999999;
+      margin: 0;
+      font-size: 12px;
     }
     .el-table th {
       border-bottom: 1px solid #e9e9e9 !important;

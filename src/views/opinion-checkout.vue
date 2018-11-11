@@ -1,21 +1,15 @@
 <template>
   <div class="sale-wrap">
-
     <b-row class="tab-title">
       <b-col cols="12">
         <ul>
-          <li @click="tabChange(1,1)">
+          <li @click="tabChange(1,0)">
             <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待处理</span>
           </li>
 
-          <li @click="tabChange(2,2)">
+          <li @click="tabChange(2,1)">
             <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已处理</span>
           </li>
-
-          <li @click="tabChange(3,3)">
-            <span :class="{'active':tabIndex==3,'':tabIndex!=3}">完结</span>
-          </li>
-
           <li @click="tabChange(4,'')">
             <span class="last-bd" :class="{'active':tabIndex==4,'':tabIndex!=4}">全部</span>
           </li>
@@ -27,55 +21,46 @@
         <b-card class="text-center sale-table">
           <div class="table-box">
             <el-table
-              :data="applyLists"
+              :data="systemLists"
               style="width: 100%"
               max-height="700" v-loading="loading">
               <el-table-column
                 prop="apealAlias"
-                label="申诉人">
+                label="反馈用户">
                 <template slot-scope="scope">
                   <div class="use-bg">
                     <div>
-                      <img class="user-logo" :src="scope.row.apealIco" v-if="scope.row.apealIco" width="38"
+                      <img class="user-logo" :src="scope.row.ico" v-if="scope.row.ico" width="38"
                            height="38"/>
                     </div>
                     <div class="use-name">
-                      <span class="user-name">{{scope.row.apealAlias}}</span>
-                      <p class="user-id">ID:{{scope.row.apealId}}</p>
+                      <span class="user-name">{{scope.row.alias}}</span>
+                      <p class="user-id">ID:{{scope.row. id}}</p>
                     </div>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="orderNo"
-                label="单号">
-              </el-table-column>
-              <el-table-column
-                prop="taskTitle"
-                label="任务标题"
-                width="180">
+                prop="content"
+                label="反馈内容">
                 <template slot-scope="scope">
                   <el-button
                     @click.native.prevent="goDetail(scope.row)"
                     type="text"
                     size="small">
-                    {{scope.row.taskTitle}}
+                    {{scope.row.content}}
                   </el-button>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="toApealAlias"
-                label="被申诉人">
+                prop="contact"
+                label="手机号">
               </el-table-column>
               <el-table-column
-                prop="taskId"
-                label="任务ID">
-              </el-table-column>
-              <el-table-column
-                prop="publishTime"
-                label="申诉时间">
+                prop="submitTime"
+                label="反馈时间">
                 <template slot-scope="scope">
-                  <span>{{getDateTime(scope.row['publishTime'])}}</span>
+                  <span>{{getDateTime(scope.row['submitTime'])}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -109,9 +94,9 @@
         total: 0,
         perPage: 10,
         page: 1,
-        applyLists: [],
+        systemLists: [],
         tabIndex: 1,
-        taskType: 1,
+        taskType: 0,
         //加载圈
         loading: true,
       };
@@ -138,15 +123,15 @@
       },
       goDetail(index) {
         this.$router.push({
-          path: '/apply-detail',
+          path: '/opinion-detail',
           query: {id: index.id}
         })
       },
       callBackApi(page) {
-        axios.post(process.env.VUE_APP_HOST + "/task/back/queryApeals", {
+        axios.post(process.env.VUE_APP_HOST + "/sys/feed/list", {
           "nextId": 0,
           "page": page,
-          "pageSize": this.pageSize,
+          "pageSize": 10,
           "preId": 0,
           "state": this.taskType
         }).then(res => {
@@ -154,7 +139,7 @@
           if (res.data.code === 200) {
             let data = res.data.data;
             this.total = data.total;
-            this.applyLists = data.records;
+            this.systemLists = data.records;
           }
         }),
           err => {
@@ -168,11 +153,10 @@
     mounted() {
     },
     beforeMount() {
-      this.taskType = 1;
       this.callBackApi(this.page);
     },
     destroyed: function () {
-      this.applyLists = [];
+      this.systemLists = [];
     }
   };
 </script>

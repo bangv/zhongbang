@@ -87,8 +87,8 @@
               <span class="detail-title">备注：</span><span>{{detailData.remarker}}</span>
             </div>
           </div>
-          <div class="pic-content" v-if="detailData.checkPics.length">
-            <div class="proving-pic">
+          <div class="pic-content" >
+            <div class="proving-pic" v-if="detailData.checkPics.length">
               <p class="pic-title">---验证图---</p>
               <div class="pic-box">
                 <div class="pic01" v-for="item in detailData.checkPics">

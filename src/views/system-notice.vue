@@ -2,24 +2,23 @@
   <div class="sale-wrap">
 
     <b-row class="tab-title">
-      <b-col cols="12">
+      <b-col cols="12" class="tool-d">
         <ul>
-          <li @click="tabChange(1,1)">
-            <span :class="{'active':tabIndex==1,'':tabIndex!=1}">待处理</span>
+          <li @click="tabChange(1,0)">
+            <span :class="{'active':tabIndex==1,'':tabIndex!=1}">草稿</span>
           </li>
 
-          <li @click="tabChange(2,2)">
-            <span :class="{'active':tabIndex==2,'':tabIndex!=2}">已处理</span>
+          <li @click="tabChange(2,1)">
+            <span :class="{'active':tabIndex==2,'':tabIndex!=2}">上线</span>
           </li>
 
-          <li @click="tabChange(3,3)">
-            <span :class="{'active':tabIndex==3,'':tabIndex!=3}">完结</span>
-          </li>
-
-          <li @click="tabChange(4,'')">
-            <span class="last-bd" :class="{'active':tabIndex==4,'':tabIndex!=4}">全部</span>
+          <li @click="tabChange(3,2)">
+            <span :class="{'active':tabIndex==3,'':tabIndex!=3}">下线</span>
           </li>
         </ul>
+        <div>
+          <el-button @click="addNotice()">新增</el-button>
+        </div>
       </b-col>
     </b-row>
     <b-row>
@@ -27,53 +26,52 @@
         <b-card class="text-center sale-table">
           <div class="table-box">
             <el-table
-              :data="applyLists"
+              :data="systemLists"
               style="width: 100%"
               max-height="700" v-loading="loading">
               <el-table-column
                 prop="apealAlias"
-                label="申诉人">
+                label="发布人">
                 <template slot-scope="scope">
                   <div class="use-bg">
                     <div>
-                      <img class="user-logo" :src="scope.row.apealIco" v-if="scope.row.apealIco" width="38"
+                      <img class="user-logo" :src="scope.row.ico" v-if="scope.row.ico" width="38"
                            height="38"/>
                     </div>
                     <div class="use-name">
-                      <span class="user-name">{{scope.row.apealAlias}}</span>
-                      <p class="user-id">ID:{{scope.row.apealId}}</p>
+                      <span class="user-name">{{scope.row.alias}}</span>
+                      <p class="user-id">ID:{{scope.row.id}}</p>
                     </div>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="orderNo"
-                label="单号">
-              </el-table-column>
-              <el-table-column
-                prop="taskTitle"
-                label="任务标题"
+                prop="title"
+                label="标题"
                 width="180">
                 <template slot-scope="scope">
                   <el-button
                     @click.native.prevent="goDetail(scope.row)"
                     type="text"
                     size="small">
-                    {{scope.row.taskTitle}}
+                    {{scope.row.title}}
                   </el-button>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="toApealAlias"
-                label="被申诉人">
+                prop="content"
+                label="内容">
+              </el-table-column>
+              <el-table-column
+                prop="createTime"
+                label="创建时间">
+                <template slot-scope="scope">
+                  <span>{{getDateTime(scope.row['createTime'])}}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="taskId"
-                label="任务ID">
-              </el-table-column>
-              <el-table-column
-                prop="publishTime"
-                label="申诉时间">
+                label="公告推送时间">
                 <template slot-scope="scope">
                   <span>{{getDateTime(scope.row['publishTime'])}}</span>
                 </template>
@@ -93,7 +91,6 @@
           </nav>
         </b-card>
       </b-col>
-
     </b-row>
   </div>
 </template>
@@ -109,9 +106,9 @@
         total: 0,
         perPage: 10,
         page: 1,
-        applyLists: [],
+        systemLists: [],
         tabIndex: 1,
-        taskType: 1,
+        taskType: 0,
         //加载圈
         loading: true,
       };
@@ -120,6 +117,12 @@
       // //时间戳转时间yy-mm-dd:hh:mm:ss
       getDateTime(data) {
         return getDate(data);
+      },
+      //新增公告
+      addNotice(){
+        this.$router.push({
+          path: '/add-edit-notice'
+        })
       },
       handleCurrentChange(val) {
         this.page = val;
@@ -138,12 +141,12 @@
       },
       goDetail(index) {
         this.$router.push({
-          path: '/apply-detail',
+          path: '/add-edit-notice',
           query: {id: index.id}
         })
       },
       callBackApi(page) {
-        axios.post(process.env.VUE_APP_HOST + "/task/back/queryApeals", {
+        axios.post(process.env.VUE_APP_HOST + "/sys/msg/public", {
           "nextId": 0,
           "page": page,
           "pageSize": this.pageSize,
@@ -154,7 +157,7 @@
           if (res.data.code === 200) {
             let data = res.data.data;
             this.total = data.total;
-            this.applyLists = data.records;
+            this.systemLists = data.records;
           }
         }),
           err => {
@@ -168,11 +171,10 @@
     mounted() {
     },
     beforeMount() {
-      this.taskType = 1;
       this.callBackApi(this.page);
     },
     destroyed: function () {
-      this.applyLists = [];
+      this.systemLists = [];
     }
   };
 </script>
@@ -195,6 +197,12 @@
     }
     width: 100%;
     .tab-title {
+      .tool-d{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
       ul,
       li {
         padding: 0;

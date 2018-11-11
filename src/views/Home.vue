@@ -19,6 +19,18 @@
             <span class="side-bg side-ioc-bg-3"></span>
             <span slot="title">申诉处理</span>
           </el-menu-item>
+          <el-menu-item index="/reward">
+            <span class="side-bg side-ioc-bg-3"></span>
+            <span slot="title">奖励审核</span>
+          </el-menu-item>
+          <el-menu-item index="/opinion">
+            <span class="side-bg side-ioc-bg-3"></span>
+            <span slot="title">意见反馈</span>
+          </el-menu-item>
+          <el-menu-item index="/system">
+            <span class="side-bg side-ioc-bg-3"></span>
+            <span slot="title">系统公告</span>
+          </el-menu-item>
         </el-menu>
       </div>
       <main class="main">
@@ -86,10 +98,11 @@ export default {
 
 <style lang="scss">
 .side {
-  position: fixed;
+  /*position: fixed;*/
+  position: absolute;
   z-index: 1019;
   width: 90px;
-  height: 100vh;
+  /*height: 100vh;*/
   background: #fff;
   ul {
     border: 0;

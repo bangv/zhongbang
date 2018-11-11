@@ -6,77 +6,80 @@
     <div class="app-body">
       <div class="content">
         <div class="detail-head">
-          <p class="list-title">任务审核详情</p>
+          <p class="list-title">申诉统计</p>
+          <div class="content-chart">
+            <div class="chart">
+              <el-progress type="circle" :percentage="detailData.percentage" :show-text="showTxt" :width="chartWidth"
+                           :stroke-width="chartBorder"
+                           color="#FF9364"></el-progress>
+            </div>
+            <div>
+              <p class="mg-bt">
+                <span class="point has"></span><span>已处理</span>
+              </p>
+              <p>
+                <span class="point"></span><span>待处理</span>
+              </p>
+            </div>
+            <div>
+              <p class="count-b">{{detailData.doCount}}</p>
+              <p class="content-b">已处理</p>
+            </div>
+            <div>
+              <p class="count-b">{{detailData.unDoCount}}</p>
+              <p class="content-b">待处理</p>
+            </div>
+            <div>
+              <p class="count-b">{{detailData.totalCount}}</p>
+              <p class="content-b">总申诉数</p>
+            </div>
+          </div>
+        </div>
+        <div class="detail-head pd-100">
+          <p class="list-title">反馈详情</p>
           <div class="publisher-wrap">
-            <span class="publisher">申诉人：</span>
+            <span class="publisher">反馈用户：</span>
             <div class="head-sculpture">
-              <img v-if="detailData.userDetailVO.ico" :src="detailData.userDetailVO.ico"
+              <img v-if="detailData.ico" :src="detailData.ico"
                    title="头像"/>
             </div>
             <div class="publisher-tip">
-              <p class="name">{{detailData.userDetailVO.alias}}</p>
-              <p class="id">ID：{{detailData.userDetailVO.userId}}</p>
-            </div>
-          </div>
-
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">被申诉人：</span><span>{{detailData.taskDetail.userDetail.alias}}<span
-                class="detail-title">（ID:{{detailData.taskDetail.userDetail.userId}}）</span></span></div>
-              <span class="detail-title">任务编号：</span><span>{{detailData.taskDetail.taskNo}}</span>
+              <p class="name">{{detailData.alias}}</p>
+              <p class="id">ID：{{detailData.id}}</p>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-
-              <div class="w-30"><span class="detail-title">任务标题：</span><span>{{detailData.taskDetail.title}}</span></div>
-              <div><span class="detail-title">任务类型：</span><span>{{detailData.taskDetail.taskTypeName}}</span></div>
-            </div>
-          </div>
-
-          <div class="publisher-content">
-            <div class="row">
-              <div class="w-30"><span class="detail-title">文字验证：</span><span>{{detailData.taskDetail.textVerify}}</span>
-              </div>
-              <div><span class="detail-title">任务截止时间：</span><span>{{detailData.taskDetail.lastTime}}</span></div>
+              <div class="w-30"><span class="detail-title">手机号：</span><span>{{detailData.contact}}</span></div>
+              <span class="detail-title">反馈时间：</span><span>{{detailData.submitTime}}</span>
             </div>
           </div>
           <div class="publisher-content">
             <div class="row">
-              <span class="detail-title">任务链接：</span><span>{{detailData.taskDetail.href}}</span>
-            </div>
-          </div>
-          <div class="publisher-content">
-            <div class="row big">
-              <span class="detail-title">备注：</span><span>{{detailData.taskDetail.remarker}}</span>
+              <span class="detail-title">反馈内容：</span><span>{{detailData.content}}</span>
             </div>
           </div>
           <div class="pic-content">
-            <div class="proving-pic"  v-if="detailData.taskDetail.checkPics.length">
-              <p class="pic-title">---验证图---</p>
+            <div class="proving-pic" v-if="detailData.urls.length">
+              <p class="pic-title">---反馈图片---</p>
               <div class="pic-box">
-                <div class="pic01" v-for="item in detailData.taskDetail.checkPics">
-                  <img :src="item.url"
-                       title="验证图"/>
+                <div class="pic01" v-for="item in detailData.urls">
+                  <img :src="item"
+                       title="反馈图片"/>
                 </div>
-              </div>
-            </div>
-            <div class="proving-pic" v-if="detailData.taskDetail.checkFailReason">
-              <p class="pic-title">---驳回原因---</p>
-              <div class="pic-box">
-                {{detailData.taskDetail.checkFailReason}}
               </div>
             </div>
           </div>
         </div>
         <div class="btn-wrap">
           <el-row>
+            <el-button class="btn btn-margin" @click="checkout()" v-if="detailData.state==0">已处理</el-button>
+            <el-button class="btn btn-margin" @click="nextTask">下一个</el-button>
             <el-button class="btn btn-margin" @click="back">返回</el-button>
           </el-row>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -96,112 +99,29 @@
     },
     data() {
       return {
+        //进度条
+        showTxt: true,
+        //进度条线宽度
+        chartBorder: 10,
+        //进度宽度
+        chartWidth: 100,
+        //类型的序列号
+        tabIndex: 0,
+        //加载圈
         loading: '',
         detailData: {
-          "taskDetail": {
-            "amount": 0,
-            "applyCount": 0,
-            "applyed": 0,
-            "checkFailReason": "",
-            "checkPics": [],
-            "checkStaus": 0,
-            "checkTime": 0,
-            "checkingCount": 0,
-            "collected": 0,
-            "completeCount": 0,
-            "deviceType": 0,
-            "examineStatus": 0,
-            "href": "",
-            "id": 0,
-            "lastTime": 0,
-            "limitTime": 0,
-            "opVedio": "",
-            "proAmount": 0,
-            "recommend": 0,
-            "refreshTime": 0,
-            "refreshTimes": 0,
-            "remarker": "",
-            "status": 0,
-            "subFlag": 0,
-            "submitId": 0,
-            "taskDetails": [],
-            "taskNo": "",
-            "taskTypeName": "",
-            "textVerify": "",
-            "title": "",
-            "toped": 0,
-            "totalAcount": 0,
-            "totalfee": 0,
-            "typeIcon": "",
-            "typeId": 0,
-            "userDetail": {
-              "alias": "",
-              "alipayNo": "",
-              "birthDay": "",
-              "bondAmout": 0,
-              "errorDetail": "",
-              "followed": 0,
-              "gender": 0,
-              "ico": "",
-              "id": 0,
-              "level": 0,
-              "levelExpired": 0,
-              "mobile": "",
-              "pwd": "",
-              "realNamed": 0,
-              "refereeId": 0,
-              "salt": "",
-              "status": 0,
-              "success": true,
-              "truename": "",
-              "type": 0,
-              "userId": "",
-              "wxNo": ""
-            },
-            "userId": 0,
-            "userNo": ""
-          },
-          "taskSubmitDetail": {
-            "accoutId": 0,
-            "checkPics": [],
-            "claimTime": 0,
-            "examineExpired": 0,
-            "examineText": "",
-            "examineTime": 0,
-            "expiredTime": 0,
-            "id": 0,
-            "remarker": "",
-            "replyText": "",
-            "status": 0,
-            "subId": 0,
-            "subTime": 0,
-            "taskAmout": 0,
-            "taskId": 0
-          },
-          "userDetailVO": {
-            "alias": "",
-            "alipayNo": "",
-            "birthDay": "",
-            "bondAmout": 0,
-            "errorDetail": "",
-            "followed": 0,
-            "gender": 0,
-            "ico": "",
-            "id": 0,
-            "level": 0,
-            "levelExpired": 0,
-            "mobile": "",
-            "pwd": "",
-            "realNamed": 0,
-            "refereeId": 0,
-            "salt": "",
-            "status": 0,
-            "success": true,
-            "truename": "",
-            "type": 0,
-            "userId": "",
-            "wxNo": ""
-          }
+          "alias": "",
+          "contact": "",
+          "content": "",
+          "doCount": 0,
+          "ico": "",
+          "id": 0,
+          "nextId": 0,
+          "state": 0,
+          "submitTime": "",
+          "totalCount": 0,
+          "unDoCount": 0,
+          "urls": []
         }
       };
     },
@@ -210,10 +130,36 @@
       getDateTime(data) {
         return getDate(data);
       },
+      //下一个
+      nextTask() {
+        if (this.detailData.nextId !== -1) {
+          this.callBackDetailApi(this.detailData.nextId);
+        } else {
+          this.$router.go(-1);
+        }
+      },
       //返回
       back() {
         this.$router.go(-1);
       },
+      //申诉处理api
+      checkout() {
+        axios
+          .post(process.env.VUE_APP_HOST + "/sys/feed/do", {
+            id: this.detailData.id
+          }).then(res => {
+          if (res.data.code === 200) {
+            this.$message("处理成功");
+            this.nextTask();
+          }
+        }),
+          err => {
+            this.loading.close();
+            this.$message("服务器故障，请稍候重试！");
+            this.nextTask();
+          };
+      },
+      //详情api
       callBackDetailApi(id) {
         this.loading = this.$loading({
           lock: true,
@@ -222,18 +168,18 @@
           background: "rgba(0, 0, 0, 0.8)"
         });
         axios
-          .post(process.env.VUE_APP_HOST + "/task/back/apealOverView", {
-            subId: +id
+          .post(process.env.VUE_APP_HOST + "/sys/feed/detail", {
+            id: id
           })
           .then(res => {
             this.loading.close();
             if (res.data.code === 200) {
               var data = res.data.data;
               this.detailData = _.cloneDeep(data);
-              this.detailData.taskDetail.checkPics = data.taskDetail.checkPics;
-              this.detailData.taskDetail.taskDetails = data.taskDetail.taskDetails;
-              this.detailData.taskDetail.lastTime = this.getDateTime(data.taskDetail.lastTime);
-
+              this.detailData.urls = data.urls;
+              this.detailData.percentage = parseInt((+data.doCount / +data.totalCount) * 100);
+              this.detailData.submitTime = this.getDateTime(data.submitTime);
+              this.detailData.nextId = data.nextId ? data.nextId : -1;
             }
           }),
           err => {
@@ -243,8 +189,8 @@
       }
     },
     mounted() {
-      this.detailData.taskDetail.id = this.$route.query.id;
-      this.callBackDetailApi(this.detailData.taskDetail.id);
+      this.detailData.id = this.$route.query.id;
+      this.callBackDetailApi(this.detailData.id);
     },
     destroyed: function () {
       this.detailData = {};
@@ -255,7 +201,6 @@
 <style lang="scss" scoped>
   //列表和头部的公共样式
   .task-detail {
-
     .app-body {
       margin-top: 0;
     }
@@ -276,6 +221,9 @@
         border: 0;
         box-shadow: 2px 2px 10px #ccc;
         border-radius: 2px;
+        &.pd-100 {
+          padding-bottom: 100px;
+        }
       }
       .list-title {
         padding-left: 5px;
@@ -410,7 +358,6 @@
           text-align: center;
           margin-bottom: 20px;
           .pic-box {
-
             .pic01 {
               display: inline-block;
               width: 30%;
@@ -426,9 +373,11 @@
           }
 
         }
+
       }
 
     }
 
   }
+
 </style>
