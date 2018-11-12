@@ -20,15 +20,15 @@
             <span slot="title">申诉处理</span>
           </el-menu-item>
           <el-menu-item index="/reward">
-            <span class="side-bg side-ioc-bg-3"></span>
+            <span class="side-bg side-ioc-bg-4"></span>
             <span slot="title">奖励审核</span>
           </el-menu-item>
           <el-menu-item index="/opinion">
-            <span class="side-bg side-ioc-bg-3"></span>
+            <span class="side-bg side-ioc-bg-5"></span>
             <span slot="title">意见反馈</span>
           </el-menu-item>
           <el-menu-item index="/system">
-            <span class="side-bg side-ioc-bg-3"></span>
+            <span class="side-bg side-ioc-bg-6"></span>
             <span slot="title">系统公告</span>
           </el-menu-item>
         </el-menu>
@@ -136,6 +136,19 @@ export default {
     background: url("../assets/appeal_normal.png") no-repeat top left;
     background-size: 100% 100%;
   }
+  .side-ioc-bg-4 {
+    background: url("../assets/icon_reward.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .side-ioc-bg-5 {
+    background: url("../assets/icon_suggestion.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .side-ioc-bg-6 {
+    background: url("../assets/icon_sysstem.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+
 }
 
 .el-menu-item:hover {
@@ -163,6 +176,17 @@ export default {
   }
   .side-ioc-bg-3 {
     background: url("../assets/appeal_select.png") no-repeat top left;
+  }
+  .side-ioc-bg-4 {
+    background: url("../assets/icon_reward_select.png") no-repeat top left;
+    background-size: 100% 100%;
+  }.side-ioc-bg-5 {
+     background: url("../assets/icon_suggestion_select.png") no-repeat top left;
+     background-size: 100% 100%;
+   }
+  .side-ioc-bg-6 {
+    background: url("../assets/icon_sysstem_select.png") no-repeat top left;
+    background-size: 100% 100%;
   }
 }
 
