@@ -4,19 +4,19 @@ let dirname = path.dirname(__dirname);
 let fileFormat = [];
 if (process.platform == 'win32') {
   fileFormat = [
-    `\\zb-sign\\src`,
-    '\\zb-sign\\test',
-    '\\zb-sign\\node_modules\\element-ui\\src',
-    '\\zb-sign\\node_modules\\element-ui\\packages',
-    '\\zb-sign\\node_modules\\@babel\\preset-env'
+    `\\zhongbang\\src`,
+    '\\zhongbang\\test',
+    '\\zhongbang\\node_modules\\element-ui\\src',
+    '\\zhongbang\\node_modules\\element-ui\\packages',
+    '\\zhongbang\\node_modules\\@babel\\preset-env'
   ]
 } else {
   fileFormat = [
-    '/zb-sign/src',
-    '/zb-sign/test',
-    '/zb-sign/node_modules/element-ui/src',
-    '/zb-sign/node_modules/element-ui/packages',
-    '/zb-sign/node_modules/@babel/preset-env'
+    '/zhongbang/src',
+    '/zhongbang/test',
+    '/zhongbang/node_modules/element-ui/src',
+    '/zhongbang/node_modules/element-ui/packages',
+    '/zhongbang/node_modules/@babel/preset-env'
   ]
 }
 
