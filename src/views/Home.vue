@@ -31,6 +31,10 @@
             <span class="side-bg side-ioc-bg-6"></span>
             <span slot="title">系统公告</span>
           </el-menu-item>
+		  <el-menu-item index="/Test">
+            <span class="side-bg side-ioc-bg-6"></span>
+            <span slot="title">导出Excel</span>
+          </el-menu-item>
         </el-menu>
       </div>
       <main class="main">

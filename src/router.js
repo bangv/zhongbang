@@ -15,6 +15,7 @@ import reward from "./views/reward-checkout";
 import opinion from "./views/opinion-checkout";
 import system from "./views/system-notice";
 import AddEditNotice from "./views/add-edit-notice";
+import HiTest from './views/HiTest'
 
 
 
@@ -71,6 +72,7 @@ let router = new Router({
       name: "opinionDetail",
       component: opinionDetail
     },
+	
     {
       path: "/home",
       name: "home",
@@ -106,7 +108,12 @@ let router = new Router({
           path: "/system",
           name: "系统公告",
           component: system
-        }
+        },
+		 {
+            name: 'Test',
+            path: '/Test',
+            component: HiTest
+        },
       ]
     }
   ]
