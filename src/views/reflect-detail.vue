@@ -98,6 +98,26 @@
       </div>
     </div>
     <el-dialog
+      class="fee-dialog"
+      title="提现费率"
+      :visible.sync="feeDialog"
+      width="400px"
+      :close-on-click-modal="noModal"
+      :close-on-press-escape="noESC"
+    >
+      <div class="demo-input-suffix">
+        <span class="fee-c">提现费率：</span>
+        <el-input
+          placeholder="请输入提现费率"
+          v-model="fee">
+        </el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="feeDialog = false">取 消</el-button>
+    <el-button type="primary" @click="reflectSuccess">确 定</el-button>
+  </span>
+    </el-dialog>
+    <el-dialog
       :title="DialogTitle"
       :visible.sync="rejectDialog"
       width="400px"
@@ -149,6 +169,8 @@
         //只能通过关闭按钮关
         noModal: false,
         noESC: false,
+        //费率弹框
+        feeDialog: false,
         //驳回弹框
         rejectDialog: false,
         //是否为驳回 反之为付款
@@ -166,6 +188,7 @@
         //加载圈
         loading: "",
         backMessage: "", //驳回原因
+        fee: 0,
         detailData: {
           //任务id
           id: "",
@@ -215,6 +238,7 @@
       checkedTaskApi(type) {
         axios
           .post(process.env.VUE_APP_HOST + "/accout/back/transCheck", {
+            'fee': +this.fee,
             "id": this.detailData.id,
             "pass": type,//1通过 0驳回
             "reason": type ? '' : this.backMessage
@@ -223,14 +247,22 @@
           .then(res => {
             let message = type ? "通过成功" : "驳回成功";
             if (res.data.code === 200) {
+              this.feeDialog = false;
               this.rejectDialog = false;
               this.$message(message);
               this.nextTask();
             }
           });
       },
-      success() {
+      reflectSuccess() {
+        if (isNaN(+this.fee) || +this.fee < 0) {
+          this.$message('费率必须是大于的数字');
+          return;
+        }
         this.checkedTaskApi(1);
+      },
+      success() {
+        this.feeDialog = true;
       },
       backAndPayTask() {
         if (this.detailData.status === 2) {//待付款 转账
@@ -274,10 +306,10 @@
               this.detailData.percentage = parseInt(
                 (+data.audited / +data.totalCount) * 100
               );
-              this.detailData.lastAmount = data.lastAmount?( +data.lastAmount / 100 ).toFixed( 2 ):0;
-              this.detailData.balance = data.balance?( +data.balance / 100 ).toFixed( 2 ):0;
+              this.detailData.lastAmount = data.lastAmount ? (+data.lastAmount / 100).toFixed(2) : 0;
+              this.detailData.balance = data.balance ? (+data.balance / 100).toFixed(2) : 0;
               this.detailData.subTime = this.getDateTime(data.subTime);
-              this.detailData.withdrawVO.amount = data.withdrawVO.amount?( +data.withdrawVO.amount / 100 ).toFixed( 2 ):0;
+              this.detailData.withdrawVO.amount = data.withdrawVO.amount ? (+data.withdrawVO.amount / 100).toFixed(2) : 0;
             }
           }),
           err => {
@@ -297,8 +329,21 @@
   };
 </script>
 <style lang="scss" scoped>
+
+
   //列表和头部的公共样式
-  .task-detail {
+  .task-detail /deep/ {
+    .fee-dialog /deep/ {
+      .demo-input-suffix {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .fee-c {
+          width: 120px;
+          display: inline-block;
+        }
+      }
+    }
     .app-body {
       margin-top: 0;
     }
@@ -373,6 +418,7 @@
           color: #333333;
         }
       }
+
       .detail-head {
         .publisher-wrap {
           width: 30%;
@@ -444,6 +490,7 @@
           }
         }
       }
+
       .pic-content {
         border-top: 1px solid rgb(233, 233, 233);
         margin-top: 40px;
