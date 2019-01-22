@@ -50,6 +50,10 @@
             <div class="publisher-tip">
               <p class="pro-name"><span class="bao">保</span><span class="count">{{detailData.proAmount}}元</span></p>
             </div>
+            <div class="level">
+              <span>上架平台：</span>
+              <el-checkbox v-model="oppoed">oppo</el-checkbox>
+            </div>
           </div>
           <div class="publisher-content">
             <div class="row">
@@ -166,6 +170,7 @@
         chartBorder: 10,
         //进度宽度
         chartWidth: 100,
+        oppoed: false,
         //加载圈
         loading: "",
         //驳回原因
@@ -214,6 +219,7 @@
       checkedTaskApi(type) {
         axios
           .post(process.env.VUE_APP_HOST + "/task/back/examine", {
+            oppoed: this.oppoed ? 1 : 0,
             examineText: this.backMessage,
             pass: type,
             submitId: this.detailData.id
@@ -368,7 +374,7 @@
       }
       .detail-head {
         .publisher-wrap {
-          width: 30%;
+          /*width: 30%;*/
           display: flex;
           padding-left: 20px;
           align-items: center;
@@ -399,6 +405,21 @@
               border-radius: 50%;
             }
           }
+
+          .level /deep/ {
+            margin-left: 94px;
+            display: flex;
+            span {
+              color: rgb(153, 153, 153);
+            }
+            .el-checkbox__inner {
+              border: 1px solid rgb(255, 147, 100);
+            }
+            .el-checkbox__label {
+              font-size: 20px;
+              color: rgb(51, 51, 51);
+            }
+          }
           .publisher-tip {
             color: #999999;
             padding-left: 10px;
@@ -426,7 +447,8 @@
                 display: inline-block;
                 padding: 0;
                 padding-left: 10px;
-                padding-right: 2px;              }
+                padding-right: 2px;
+              }
             }
           }
         }
