@@ -138,7 +138,7 @@
 
         <div class="payment-content">
           <p><span class="detail-title">提现类别：</span><span>{{detailData.transType}}</span></p>
-          <p class="pd-30"><span class="detail-title">提现金额：</span><span>{{detailData.withdrawVO.amount}}元</span>
+          <p class="pd-30"><span class="detail-title">提现金额：</span><span>{{detailData.realAmount}}元</span>
           </p>
         </div>
       </div>
@@ -200,6 +200,7 @@
           userDetail: {ico: "", userId: ""},
           status: '',//当前任务状态
           transType: "", //提现类别
+          realAmount:'',//转账金额
           userId: "", //用户id
           orderNo: "", //单号
           withdrawVO: {amount: 0, accoutNo: "", realName: "", memberLevel: ""},
@@ -309,7 +310,7 @@
               this.detailData.lastAmount = data.lastAmount ? (+data.lastAmount / 100).toFixed(2) : 0;
               this.detailData.balance = data.balance ? (+data.balance / 100).toFixed(2) : 0;
               this.detailData.subTime = this.getDateTime(data.subTime);
-              this.detailData.withdrawVO.amount = data.withdrawVO.amount ? (+data.withdrawVO.amount / 100).toFixed(2) : 0;
+              this.detailData.realAmount = data.realAmount ? (+data.realAmount / 100).toFixed(2) : 0;
             }
           }),
           err => {
